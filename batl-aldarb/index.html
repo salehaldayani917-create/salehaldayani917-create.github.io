@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>بطل الضرب</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(#79b9ff,#214b9f);font-family:Tahoma,Arial,sans-serif;color:#fff;text-align:center;padding:24px}
+.box{max-width:520px;background:rgba(19,53,107,.88);border:1px solid rgba(255,255,255,.25);border-radius:22px;padding:28px;box-shadow:0 18px 50px rgba(0,0,0,.2)}
+h1{color:#ffd76a;margin:0 0 12px}.spin{font-size:36px;animation:r 1s linear infinite;display:inline-block}@keyframes r{to{transform:rotate(360deg)}}small{display:block;opacity:.8;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="box"><div class="spin">⏳</div><h1>بطل الضرب</h1><p id="msg">جاري تشغيل اللعبة...</p><small>تعمل على الجوال والكمبيوتر</small></div>
+<script>
+(async()=>{
+  const msg=document.getElementById('msg');
+  try{
+    const parts=await Promise.all([0,1,2,3].map(i=>fetch('chunk_0'+i+'.txt?'+Date.now()).then(r=>{if(!r.ok)throw new Error('chunk '+i);return r.text()})));
+    const b64=parts.join('').replace(/\s+/g,'');
+    const bin=atob(b64);
+    const bytes=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    let html;
+    if('DecompressionStream' in window){
+      const ds=new DecompressionStream('gzip');
+      html=await new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
+    }else{
+      msg.textContent='جاري تجهيز التوافق مع جهازك...';
+      await new Promise((resolve,reject)=>{
+        const s=document.createElement('script');
+        s.src='https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
+        s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+      });
+      html=new TextDecoder().decode(window.pako.ungzip(bytes));
+    }
+    document.open();document.write(html);document.close();
+  }catch(e){
+    console.error(e);
+    msg.innerHTML='تعذر تشغيل اللعبة تلقائيًا.<br>حدّث الصفحة مرة واحدة، وإذا استمرت المشكلة افتح الرابط في Safari أو Chrome.';
+  }
+})();
+</script>
+</body></html>
