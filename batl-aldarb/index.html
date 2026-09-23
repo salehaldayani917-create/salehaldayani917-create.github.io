@@ -277,7 +277,7 @@ const sectionData={
  composition:{title:'قسم التركيب',desc:'فكّك، اختر رقمًا مريحًا، احسب الأجزاء، ثم ركّب الناتج.',stages:['11–19 × حتى 100','20–29 × 20–29','20–29 × 30–49','20–29 × 50–100','30–49 × 30–49','30–49 × 50–69','30–49 × 70–100','50–69 × 50–69','50–69 × 70–89','50–69 × 90–100','70–89 × 70–89','70–89 × 90–100','90–100 × 90–100','اختبار إتقان القسم']}
 };
 let currentSection='foundation';
-function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const unlocked=i<=state.sections[key].stages || i===0; const isTest=i===d.stages.length-1; el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
+function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const unlocked=i<=state.sections[key].stages || i===0; const isTest=i===d.stages.length-1; el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
 $$('.section-card').forEach(c=>c.onclick=()=>openSection(c.dataset.section)); $('#backHome').onclick=()=>show('screen-home'); $('#backSection').onclick=()=>openSection(currentSection);
 $('#continueJourney').onclick=()=>{if(sectionFill('foundation')<95)return openSection('foundation');if(state.sections.building.score<95)return openSection('building');return openSection('composition')};
 
@@ -436,6 +436,23 @@ function generateFoundationTest(){
   return shuffle(qs).slice(0,20);
 }
 
+function generateBuildingTest(){
+  const ranges=[[11,20],[21,30],[31,40],[41,50],[51,60],[61,70],[71,80],[81,90],[91,100]];
+  const qs=[];
+  ranges.forEach(([lo,hi])=>{
+    for(let k=0;k<2;k++){
+      const n=randInt(lo,hi), m=randInt(2,9);
+      qs.push({q:`${n} × ${m} = ؟`,answer:n*m});
+    }
+  });
+  while(qs.length<20){
+    const [lo,hi]=ranges[randInt(0,ranges.length-1)];
+    const n=randInt(lo,hi),m=randInt(2,9);
+    qs.push({q:`${n} × ${m} = ؟`,answer:n*m});
+  }
+  return shuffle(qs);
+}
+
 function openLesson(key,i,name){
  $('#lessonTitle').textContent=name;$('#lessonStep').textContent=`${sectionData[key].title} — المرحلة ${i+1}`; const box=$('#lessonContent');
  const completeStage=(stageScore)=>{
@@ -527,6 +544,49 @@ function openLesson(key,i,name){
      save();
      openSection(key);
    });
+ }
+ else if(i===sectionData[key].stages.length-1 && key==='building'){
+   const questions=generateBuildingTest();
+   let qi=0, answers=[];
+   const renderQ=()=>{
+     const q=questions[qi];
+     box.innerHTML=`<div class="result"><h2>اختبار إتقان قسم البناء</h2><p>السؤال <strong>${qi+1}</strong> من ${questions.length}</p><div class="progress"><span style="width:${(qi/questions.length)*100}%"></span></div><div class="lesson-box" style="margin-top:18px"><h2 class="question-clean">${q.q}</h2><div class="answer-entry"><input id="buildingTestInput" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"><button class="btn btn-primary" id="buildingTestNext">التالي</button></div></div><div class="soft-note">لن نظهر الصح والخطأ أثناء الاختبار؛ النتيجة تظهر بعد آخر سؤال.</div></div>`;
+     const input=$('#buildingTestInput'), next=$('#buildingTestNext');
+     const submit=()=>{
+       const raw=(input.value||'').trim().replace(/[^0-9-]/g,'');
+       if(raw==='')return;
+       answers.push(Number(raw)===Number(q.answer));
+       qi++;
+       if(qi<questions.length)renderQ(); else finishTest();
+     };
+     next.onclick=submit;
+     input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();submit();}};
+     setTimeout(()=>input.focus(),40);
+   };
+   const finishTest=()=>{
+     const correct=answers.filter(Boolean).length;
+     const attempt=(correct/questions.length)*100;
+     const previous=Number(state.rewards.building.testScore||0);
+     state.rewards.building.testScore=Math.max(previous,attempt);
+     state.rewards.building.testFinished=true;
+     state.sections.building.stages=9;
+     const st=buildingStageStats(), tt=buildingTestStats();
+     const final=st.weighted+tt.weighted;
+     state.sections.building.score=Math.round(final*10)/10;
+     save();
+     const mastery=final>=95;
+     const message=mastery
+       ? 'أبدعت يا بطل! 🏆 وصلت لإتقان قسم البناء وأكملت النجمة ⭐'
+       : 'ممتاز يا بطل 💪 بقي لك جزء بسيط على الإتقان. أعد المراحل التي تحتاجها ثم جرّب اختبارًا جديدًا.';
+     const best=state.rewards.building.testScore;
+     box.innerHTML=`<div class="result"><h2>نتيجة قسم البناء ⭐</h2><div class="score">${attempt.toFixed(0)}٪</div><p>هذه المحاولة: ${correct} من ${questions.length}</p><div class="stats"><div class="stat"><strong>${st.raw.toFixed(1)}٪</strong><span>نتيجة المراحل</span></div><div class="stat"><strong>${st.weighted.toFixed(1)} / 85</strong><span>وزن المراحل</span></div><div class="stat"><strong>${best.toFixed(1)}٪</strong><span>أفضل نتيجة اختبار</span></div><div class="stat"><strong>${tt.weighted.toFixed(1)} / 15</strong><span>وزن الاختبار</span></div></div><div class="tip"><strong>الإنجاز النهائي للقسم: ${final.toFixed(1)}٪</strong></div><div class="lesson-box" style="margin-top:16px"><h3>${message}</h3></div><div class="actions"><button class="btn btn-primary" id="retryBuildingTest">🔄 إعادة الاختبار بأسئلة جديدة</button><button class="btn btn-secondary" id="buildingResultSection">العودة للقسم</button><button class="btn btn-secondary" id="buildingResultHome">الرئيسية</button></div></div>`;
+     setTimeout(()=>{
+       $('#retryBuildingTest').onclick=()=>openLesson('building',9,'اختبار إتقان القسم');
+       $('#buildingResultSection').onclick=()=>openSection('building');
+       $('#buildingResultHome').onclick=()=>show('screen-home');
+     },0);
+   };
+   renderQ();
  }
  else if(i===sectionData[key].stages.length-1 && key==='foundation'){
    const arrangeOptions=(opts,correct,index)=>{
