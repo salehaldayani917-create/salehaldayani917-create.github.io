@@ -1,44 +1,554 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>بطل الضرب</title>
 <style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(#79b9ff,#214b9f);font-family:Tahoma,Arial,sans-serif;color:#fff;text-align:center;padding:24px}
-.box{max-width:520px;background:rgba(19,53,107,.88);border:1px solid rgba(255,255,255,.25);border-radius:22px;padding:28px;box-shadow:0 18px 50px rgba(0,0,0,.2)}
-h1{color:#ffd76a;margin:0 0 12px}.spin{font-size:36px;animation:r 1s linear infinite;display:inline-block}@keyframes r{to{transform:rotate(360deg)}}small{display:block;opacity:.8;margin-top:10px}
+:root{
+  --bg:#12356b; --panel:#2b5fa8; --panel2:#3a72bf; --gold:#ffd76a;
+  --cyan:#8ef2ff; --purple:#a98cff; --green:#66e0b8; --text:#f9fcff; --muted:#d7e6ff;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:radial-gradient(circle at top,#79b9ff 0,#3f75d4 30%,#214b9f 62%,#173a83 100%);color:var(--text);min-height:100vh}
+button,input{font:inherit}button,.btn,.q-options button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;min-height:44px}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}body{overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}.app{max-width:1100px;margin:auto;padding:22px}.hidden{display:none!important}
+.card{background:linear-gradient(180deg,rgba(60,120,205,.95),rgba(31,76,156,.96));border:1px solid rgba(93,227,255,.32);border-radius:24px;padding:24px;box-shadow:0 18px 40px rgba(16,38,84,.18)}
+.hero{text-align:center;padding:56px 24px}.logo{font-size:70px;font-weight:900;color:var(--gold);text-shadow:0 4px 0 #7a4b00,0 0 28px rgba(245,196,81,.35)}
+.subtitle{font-size:22px;color:var(--cyan);margin:8px 0 28px}.btn{border:0;border-radius:16px;padding:14px 22px;cursor:pointer;font-weight:800}.btn-primary{background:linear-gradient(90deg,#f4bd3a,#ffe17c);color:#352100}.btn-secondary{background:#4d84d6;color:white;border:1px solid #a7ccff}.btn-ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid #9ec4ff}.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.title{font-size:32px;margin:0 0 10px}.muted{color:var(--muted)}.input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #a5c8ff;background:#f5fbff;color:#17325e;margin:12px 0}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.choice{padding:20px;border-radius:18px;background:linear-gradient(180deg,#5f94e0,#497dca);border:2px solid transparent;cursor:pointer;text-align:center}.choice.active{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,196,81,.14)}
+.intro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.intro-item{padding:20px;background:linear-gradient(180deg,#5b90dc,#4677c7);border-radius:18px;border:1px solid #a9ccff}.intro-item h3{color:var(--gold)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.pill{padding:10px 14px;border-radius:999px;background:linear-gradient(180deg,#5088d8,#3f73be);border:1px solid #a5c8ff}.achievement{display:flex;flex-direction:column;align-items:center;gap:10px}.crown-wrap{text-align:center}.crown-shape{position:relative;display:block;width:160px;height:102px;clip-path:polygon(0% 100%,0% 42%,12% 42%,22% 10%,38% 42%,50% 18%,62% 42%,78% 10%,88% 42%,100% 42%,100% 100%);background:linear-gradient(to top,var(--gold) var(--fill),#24477d var(--fill));border:3px solid #f7df8a;border-radius:12px;box-shadow:0 0 18px rgba(255,215,106,.28), inset 0 2px 10px rgba(255,255,255,.18)}.crown-shape::before,.crown-shape::after{content:"";position:absolute;inset:auto 12px 10px 12px;height:14px;border-radius:999px;background:linear-gradient(90deg,#fff2b5,#ffd76a,#fff2b5);opacity:.9}.crown-shape::after{inset:12px auto auto 18px;width:12px;height:12px;border-radius:50%;background:#8ef2ff;box-shadow:32px 6px 0 #ff8bd1,64px -2px 0 #8ef2ff,96px 7px 0 #ff8bd1}.crown-shape.ready{box-shadow:0 0 28px rgba(255,215,106,.5), inset 0 2px 14px rgba(255,255,255,.24)}.crown-label{font-size:13px;color:var(--muted);margin-top:6px}.stars{display:flex;justify-content:center;align-items:flex-end;gap:24px;margin:4px 0 14px}.star-wrap{text-align:center}.star{width:90px;height:90px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 35%,39% 35%);background:linear-gradient(to top,var(--gold) var(--fill),#213c6c var(--fill));border:2px solid #f0c95c;filter:drop-shadow(0 0 10px rgba(245,196,81,.25))}.star.big{width:120px;height:120px;transform:translateY(-14px)}.star-label{font-size:13px;color:var(--muted);margin-top:6px}.fill-note{font-size:12px;color:var(--muted);margin-top:4px}
+.sections{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.section-card{cursor:pointer;position:relative;overflow:hidden}.section-card.locked{opacity:.6;cursor:not-allowed}.section-card h3{font-size:26px;margin:0 0 8px}.section-card .progress{height:10px;background:#cfe5ff;border-radius:999px;overflow:hidden;margin-top:18px}.section-card .bar{height:100%;background:linear-gradient(90deg,#7ce7ff,#b29cff);width:0}.section-card .badge{position:absolute;left:16px;top:16px;font-size:22px}
+.path{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stage{padding:18px;border-radius:18px;background:linear-gradient(180deg,#5e93dc,#4579c7);border:1px solid #a9ccff;cursor:pointer}.stage.locked{opacity:.55;cursor:not-allowed}.stage.done{border-color:#2bd59f}.stage h4{margin:0 0 8px}.stage small{color:var(--muted)}
+.lesson{max-width:760px;margin:auto}.lesson-box{padding:26px;border-radius:20px;background:linear-gradient(180deg,#5f94df,#477bc9);margin:16px 0}.visual-groups{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}.group{background:#7fb0f0;padding:12px 18px;border-radius:16px;font-size:32px}.q-options{display:grid;gap:10px;margin-top:16px}.q-options button{padding:14px;border-radius:14px;border:1px solid #a9ccff;background:#548ade;color:white;cursor:pointer} .q-options button:hover{border-color:var(--gold)}.answer-entry{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:18px}.answer-entry input{width:220px;max-width:80%;padding:14px 16px;border-radius:14px;border:2px solid #a9ccff;background:#f8fbff;color:#17325e;text-align:center;font-size:24px;font-weight:800;direction:ltr}.answer-entry input:focus{outline:none;border-color:var(--gold)}.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}.method-card{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:16px}.method-card h4{margin:0 0 8px;color:var(--gold)}.method-card p{margin:5px 0;line-height:1.7}.method-intro{font-size:18px;text-align:center;margin:10px 0 14px;color:#f4f8ff}.method-flow{display:flex;direction:ltr;align-items:flex-start;justify-content:center;gap:14px;flex-wrap:wrap;margin:10px 0 12px}.term-stack{min-width:86px;text-align:center}.term-top{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px 8px;font-weight:800;direction:ltr}.term-arrow{font-size:28px;line-height:1;color:var(--gold);margin:4px 0}.term-bottom{font-size:24px;font-weight:900;color:#fff;direction:ltr}.term-op{font-size:30px;font-weight:900;color:var(--gold);align-self:center;margin-top:30px}.method-final{margin-top:10px;text-align:center;font-size:22px;font-weight:900;color:#fff;direction:ltr;background:rgba(255,255,255,.08);border-radius:12px;padding:10px 12px}.question-clean{font-size:34px;font-weight:900;text-align:center;margin:18px 0;direction:ltr}.result{text-align:center}.score{font-size:54px;color:var(--gold);font-weight:900}.certificate{background:#f7f0da;color:#18315a;border:8px double #d8b45b;border-radius:18px;padding:36px;text-align:center}.certificate h2{font-size:42px;color:#8a5b00}.certificate .cert-achievement{display:flex;flex-direction:column;align-items:center;gap:8px;margin:8px 0 16px}.certificate .cert-crown{font-size:54px;line-height:1.1;margin-bottom:2px}.certificate .cert-stars-layout{display:flex;align-items:flex-end;justify-content:center;gap:14px;direction:ltr}.certificate .cert-star{color:#d4a92f;line-height:1}.certificate .cert-star.small{font-size:36px}.certificate .cert-star.big{font-size:46px;transform:translateY(-10px)}.certificate .cert-stars{font-size:40px}.footer-note{text-align:center;color:#dbe8ff;margin:24px 0 6px}
+.visual-demo{display:grid;gap:18px;margin-top:16px}.visual-card{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:16px}.visual-title{font-weight:800;margin-bottom:10px}.basket-row{display:flex;direction:rtl;justify-content:center;gap:16px;flex-wrap:wrap}.basket{min-width:92px;padding:10px 12px 12px;border-radius:18px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);text-align:center}.basket-icon{font-size:38px;line-height:1}.items{font-size:28px;letter-spacing:2px;margin-top:4px}.visual-math{text-align:center;margin-top:12px;font-size:20px;line-height:1.7}.visual-math strong{font-size:27px;color:var(--gold)}.visual-question{background:rgba(142,242,255,.10);border:1px solid rgba(142,242,255,.38);padding:14px;border-radius:16px;margin-top:14px}.count-badges{display:flex;direction:rtl;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}.count-badge{background:rgba(255,255,255,.11);padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18)}
+.example-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.example{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:14px;text-align:center}.example strong{display:block;font-size:24px;margin-top:6px}.tip{background:rgba(255,215,106,.14);border:1px solid rgba(255,215,106,.4);padding:12px 14px;border-radius:14px;margin-top:14px}.flow-rtl{display:flex;direction:rtl;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-size:28px;font-weight:900;margin:16px 0}.flow-step{background:rgba(255,255,255,.12);padding:10px 16px;border-radius:14px}.flow-arrow{color:var(--gold);font-size:30px}.mini-check{display:grid;gap:10px;margin-top:14px}.mini-check div{background:rgba(255,255,255,.08);padding:10px 12px;border-radius:12px}.step-seq{display:flex;direction:rtl;justify-content:center;gap:12px;flex-wrap:wrap;margin:16px 0}.step-card{min-width:120px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.2);padding:12px;border-radius:16px;text-align:center}.step-card small{display:block;color:var(--muted);margin-bottom:6px}.step-card strong{font-size:28px;display:block}.soft-note{font-size:15px;color:var(--muted);text-align:center;margin-top:8px}
+
+.journey-wrap{margin:0 0 18px;padding:14px 16px 10px;border-radius:20px;background:rgba(18,53,107,.52);border:1px solid rgba(255,255,255,.22);box-shadow:0 10px 24px rgba(8,35,90,.16)}
+.journey-labels{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:20px}.journey-labels strong{color:var(--text)}
+.journey-track{position:relative;height:13px;border-radius:999px;background:rgba(221,236,255,.35);border:1px solid rgba(255,255,255,.28);overflow:visible;direction:rtl}
+.journey-fill{position:absolute;right:0;top:0;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ffd76a,#8ef2ff);box-shadow:0 0 12px rgba(142,242,255,.32);transition:width .45s ease}
+.journey-marker{position:absolute;top:-34px;right:0;transform:translateX(50%);background:#fff;color:#173a83;padding:5px 9px;border-radius:999px;font-weight:900;font-size:12px;white-space:nowrap;transition:right .45s ease;box-shadow:0 6px 14px rgba(12,43,94,.2)}
+.journey-marker:after{content:"";position:absolute;right:50%;transform:translateX(50%);bottom:-6px;border:6px solid transparent;border-top-color:#fff;border-bottom:0}
+.journey-caption{text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+@media(max-width:800px){
+  .app{padding:12px;max-width:100%}
+  .intro-grid,.sections,.path,.method-grid{grid-template-columns:1fr}
+  .logo{font-size:42px;line-height:1.1}
+  .stars{gap:8px;transform:scale(.94);transform-origin:center}
+  .star{width:68px;height:68px}.star.big{width:88px;height:88px}.crown-shape{width:118px;height:74px}
+  .choice-grid,.example-grid{grid-template-columns:1fr}
+  .topbar{align-items:stretch;flex-direction:column;gap:10px}
+  .topbar .btn{width:100%}
+  .card,.lesson-box,.visual-card,.method-card{border-radius:16px}
+  .lesson-box{padding:16px;margin:12px 0}
+  .visual-card{padding:13px}
+  .method-grid{gap:10px}
+  .method-flow{gap:8px}
+  .term-stack{min-width:74px;flex:1 1 74px}
+  .term-top{padding:8px 6px;font-size:15px}
+  .term-bottom{font-size:21px}
+  .term-op{font-size:24px;margin-top:28px}
+  .method-final{font-size:19px}
+  .question-clean{font-size:30px;margin:14px 0}
+  .answer-entry{display:grid;grid-template-columns:1fr;gap:10px}
+  .answer-entry input{width:100%;max-width:100%;box-sizing:border-box;font-size:24px;min-height:52px}
+  .answer-entry .btn{width:100%;min-height:52px}
+  .q-options button,.btn{min-height:50px;font-size:17px}
+  .actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  .actions .btn{width:100%}
+  .basket-row{gap:8px}
+  .basket{min-width:72px;padding:8px 9px}
+  .basket-icon{font-size:30px}.items{font-size:23px;letter-spacing:1px}
+  .visual-math{font-size:18px}.visual-math strong{font-size:23px}
+  .count-badges{gap:7px}.count-badge{padding:7px 9px;font-size:14px}
+  .step-seq{gap:8px}.step-card{min-width:95px;flex:1 1 95px;padding:10px}
+  .step-card strong{font-size:24px}
+  .stats{grid-template-columns:1fr 1fr!important;gap:8px}
+  .stat{min-width:0}
+  .certificate{padding:20px 12px;border-width:5px}.certificate h2{font-size:32px}
+  .journey-wrap{padding-left:4px!important;padding-right:4px!important}
+  .journey-labels{font-size:12px!important}
+}
+@media(max-width:430px){
+  .app{padding:8px}
+  .logo{font-size:36px}
+  .title{font-size:26px!important}
+  .lesson-box{padding:13px}
+  .method-card{padding:12px}
+  .method-flow{gap:5px}
+  .term-stack{min-width:66px}
+  .term-top{font-size:14px}.term-bottom{font-size:19px}.term-op{font-size:21px}
+  .question-clean{font-size:27px}
+  .basket{min-width:64px}.items{font-size:20px}
+  .stats{grid-template-columns:1fr!important}
+}
 </style>
 </head>
 <body>
-<div class="box"><div class="spin">⏳</div><h1>بطل الضرب</h1><p id="msg">جاري تشغيل اللعبة...</p><small>تعمل على الجوال والكمبيوتر</small></div>
+<div class="app">
+<div id="journeyBar" class="journey-wrap hidden">
+  <div class="journey-labels"><strong>البداية</strong><strong>المكافأة 🏆</strong></div>
+  <div class="journey-track"><div id="journeyFill" class="journey-fill"></div><div id="journeyMarker" class="journey-marker">0%</div></div>
+  <div class="journey-caption">تقدمك في رحلة بطل الضرب من 100%</div>
+</div>
+<section id="screen-start" class="card hero">
+  <div class="logo">بطل الضرب</div><div class="subtitle">تعلّم الضرب بالفهم، واصنع طريقك نحو الإتقان</div>
+  <div class="actions"><button type="button" class="btn btn-primary" id="startBtn" onclick="mobileStartFallback();return false;">ابدأ الرحلة</button><button type="button" class="btn btn-secondary hidden" id="continueBtn" onclick="mobileContinueFallback();return false;">متابعة الرحلة</button></div><div id="mobileStatus" class="muted" style="margin-top:12px;font-size:13px"></div>
+</section>
+
+<section id="screen-profile" class="card hidden">
+  <h1 class="title">من البطل اليوم؟</h1><p class="muted">اكتب اسمك واختر اللقب.</p>
+  <input class="input" id="playerName" placeholder="اكتب اسمك هنا" />
+  <div class="choice-grid"><div class="choice active" data-gender="male">🏆 بطل الضرب</div><div class="choice" data-gender="female">👑 بطلة الضرب</div></div>
+  <button class="btn btn-primary" id="saveProfile">ابدأ رحلتي</button>
+</section>
+
+<section id="screen-intro" class="hidden">
+  <div class="card"><h1 class="title">قبل ما تبدأ</h1><div class="intro-grid">
+    <div class="intro-item"><h3>1 — افهم</h3><p>هنا ما راح تحفظ الضرب فقط؛ راح تفهم كيف تحله بذهنك.</p></div>
+    <div class="intro-item"><h3>2 — أتقن</h3><p>عندك 3 أقسام: الأساس، البناء، التركيب. كل قسم له اختبار إتقان.</p></div>
+    <div class="intro-item"><h3>3 — تُوَّج</h3><p>حقق 95٪ فأعلى في كل قسم، ثم أتقن الاختبار الشامل لفتح التاج والشهادة.</p></div>
+  </div><div class="actions" style="margin-top:20px"><button class="btn btn-primary" id="goHome">ابدأ الرحلة 🚀</button></div></div>
+</section>
+
+<section id="screen-home" class="hidden">
+  <div class="topbar"><div><h1 class="title" id="welcome"></h1><div class="muted">لا نعلّمك ماذا تحفظ؛ بل نعلّمك كيف تفكر.</div></div><div class="stats"><div class="pill">💎 <span id="gems">0</span> / 10,000</div><div class="pill">التقدم <span id="overall">0%</span></div></div></div>
+  <div class="card"><div class="achievement"><div class="crown-wrap"><div id="crown" class="crown-shape" style="--fill:0%"></div><div class="crown-label">تاج التتويج</div><div class="fill-note" id="crownNote">يمتلئ بعد فتح الاختبار الشامل</div></div><div class="stars">
+    <div class="star-wrap"><div id="star2" class="star" style="--fill:0%"></div><div class="star-label">البناء</div><div class="fill-note" id="note2">0%</div></div>
+    <div class="star-wrap"><div id="star3" class="star big" style="--fill:0%"></div><div class="star-label">التركيب</div><div class="fill-note" id="note3">0%</div></div>
+    <div class="star-wrap"><div id="star1" class="star" style="--fill:0%"></div><div class="star-label">الأساس</div><div class="fill-note" id="note1">0%</div></div>
+  </div></div></div>
+  <div class="sections" style="margin-top:16px">
+    <div class="card section-card" data-section="foundation"><span class="badge">🌱</span><h3>الأساس</h3><p>فهم معنى الضرب وجداول 1–10 بالفهم.</p><div class="muted" style="margin:8px 0">💎 جواهر القسم: <strong id="foundationGems">0 / 1,000</strong></div><div class="progress"><div id="bar-foundation" class="bar"></div></div></div>
+    <div class="card section-card locked" data-section="building"><span class="badge">🧱</span><h3>البناء</h3><p>من 11 إلى 100 بالتفكيك ونقاط الارتكاز.</p><div class="progress"><div id="bar-building" class="bar"></div></div></div>
+    <div class="card section-card locked" data-section="composition"><span class="badge">🧩</span><h3>التركيب</h3><p>ضرب عددين من خانتين حتى 100×100.</p><div class="progress"><div id="bar-composition" class="bar"></div></div></div>
+  </div>
+  <div class="actions" style="margin-top:18px"><button class="btn btn-primary" id="continueJourney">تابع رحلتك</button><button class="btn btn-ghost hidden" id="finalExamBtn">👑 اختبار التتويج</button></div>
+</section>
+
+<section id="screen-section" class="hidden"><div class="topbar"><div><h1 id="sectionTitle" class="title"></h1><div id="sectionDesc" class="muted"></div></div><button class="btn btn-ghost" id="backHome">الرئيسية</button></div><div id="stageList" class="path"></div></section>
+
+<section id="screen-lesson" class="hidden lesson"><div class="topbar"><div><h1 id="lessonTitle" class="title"></h1><div id="lessonStep" class="muted"></div></div><button class="btn btn-ghost" id="backSection">رجوع</button></div><div id="lessonContent" class="card"></div></section>
+
+<section id="screen-final" class="hidden lesson"><div class="card result"><h1 class="title">اختبار التتويج 👑</h1><p>هذه نسخة تجريبية: بعد اكتمال النجوم الثلاث سيظهر هنا الاختبار الشامل الحقيقي.</p><button class="btn btn-primary" id="demoCrown">محاكاة نتيجة 97٪</button></div></section>
+
+<section id="screen-certificate" class="hidden lesson"><div class="certificate"><div style="font-size:22px">شعار اللعبة</div><h2>شهادة إنجاز</h2><p>تُمنح إلى</p><h1 id="certName"></h1><p id="certTitle"></p><div class="score">97٪</div><div class="cert-achievement"><div class="cert-crown">👑</div><div class="cert-stars-layout"><span class="cert-star small">⭐</span><span class="cert-star big">⭐</span><span class="cert-star small">⭐</span></div></div><p>تقديرًا لإصرارك واجتهادك في إتقان مهارات الضرب من البداية حتى الاحتراف.</p><strong>بطل الضرب</strong></div><div class="actions" style="margin-top:18px"><button class="btn btn-secondary" id="certHome">العودة للرئيسية</button></div></section>
+<div class="footer-note">نسخة MVP تجريبية — بطل الضرب</div>
+</div>
 <script>
-(async()=>{
-  const msg=document.getElementById('msg');
-  try{
-    const parts=await Promise.all([0,1,2,3].map(i=>fetch('chunk_0'+i+'.txt?'+Date.now()).then(r=>{if(!r.ok)throw new Error('chunk '+i);return r.text()})));
-    const b64=parts.join('').replace(/\s+/g,'');
-    const bin=atob(b64);
-    const bytes=new Uint8Array(bin.length);
-    for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
-    let html;
-    if('DecompressionStream' in window){
-      const ds=new DecompressionStream('gzip');
-      html=await new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
-    }else{
-      msg.textContent='جاري تجهيز التوافق مع جهازك...';
-      await new Promise((resolve,reject)=>{
-        const s=document.createElement('script');
-        s.src='https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
-        s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
-      });
-      html=new TextDecoder().decode(window.pako.ungzip(bytes));
-    }
-    document.open();document.write(html);document.close();
-  }catch(e){
-    console.error(e);
-    msg.innerHTML='تعذر تشغيل اللعبة تلقائيًا.<br>حدّث الصفحة مرة واحدة، وإذا استمرت المشكلة افتح الرابط في Safari أو Chrome.';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const STORAGE_KEY='batlAldarb_scoring_v4_fresh';
+let storageOK=true;
+const safeStorage={
+  get(key){try{return window.localStorage?window.localStorage.getItem(key):null}catch(e){storageOK=false;return null}},
+  set(key,val){try{if(window.localStorage)window.localStorage.setItem(key,val)}catch(e){storageOK=false}}
+};
+let loadedState=null;
+try{loadedState=JSON.parse(safeStorage.get(STORAGE_KEY)||'null')}catch(e){loadedState=null}
+const state=loadedState||{name:'',gender:'male',intro:false,gems:0,sections:{foundation:{score:0,stages:0},building:{score:0,stages:0},composition:{score:0,stages:0}},crown:0};
+state.rewards=state.rewards||{};
+state.rewards.foundation=state.rewards.foundation||{};
+state.rewards.foundation.stageAnswers=state.rewards.foundation.stageAnswers||{};
+state.rewards.foundation.testAnswers=state.rewards.foundation.testAnswers||[];
+state.rewards.foundation.testScore=state.rewards.foundation.testScore||0;
+state.rewards.foundation.testFinished=!!state.rewards.foundation.testFinished;
+state.rewards.building=state.rewards.building||{};
+state.rewards.building.stageScores=state.rewards.building.stageScores||{};
+state.rewards.building.testScore=state.rewards.building.testScore||0;
+state.rewards.building.testFinished=!!state.rewards.building.testFinished;
+function save(){safeStorage.set(STORAGE_KEY,JSON.stringify(state));}
+function show(id){$$('section').forEach(s=>s.classList.add('hidden')); $('#'+id).classList.remove('hidden'); const inJourney=['screen-home','screen-section','screen-lesson','screen-final','screen-certificate'].includes(id); $('#journeyBar').classList.toggle('hidden',!inJourney); if(inJourney) renderJourney(); if(id==='screen-home') renderHome();}
+function bindTap(el,fn){
+  if(!el)return;
+  el.addEventListener('click',function(e){fn(e);},false);
+}
+function hardShow(id){
+  var sections=document.querySelectorAll('section');
+  for(var i=0;i<sections.length;i++){sections[i].classList.add('hidden');}
+  var target=document.getElementById(id);
+  if(target)target.classList.remove('hidden');
+  var jb=document.getElementById('journeyBar');
+  if(jb)jb.classList.add('hidden');
+  window.scrollTo(0,0);
+}
+function mobileStartFallback(){
+  try{show('screen-profile');}catch(e){hardShow('screen-profile');}
+}
+function mobileContinueFallback(){
+  try{show('screen-home');}catch(e){hardShow('screen-home');}
+}
+window.mobileStartFallback=mobileStartFallback;
+window.mobileContinueFallback=mobileContinueFallback;
+if(state.name){$('#continueBtn').classList.remove('hidden');}
+// start/continue use inline fallbacks for maximum mobile compatibility
+$$('.choice').forEach(c=>bindTap(c,()=>{$$('.choice').forEach(x=>x.classList.remove('active'));c.classList.add('active');state.gender=c.dataset.gender}));
+bindTap($('#saveProfile'),()=>{const n=$('#playerName').value.trim();if(!n)return alert('اكتب اسم اللاعب أولًا');state.name=n;save();show('screen-intro')});
+bindTap($('#goHome'),()=>{state.intro=true;save();show('screen-home')});
+if($('#mobileStatus')) $('#mobileStatus').textContent=storageOK?'جاهز للعمل على الجوال والكمبيوتر':'التشغيل متاح، لكن هذه المعاينة تمنع حفظ التقدم محليًا';
+function scoreFill(v){return Math.max(0,Math.min(100,v));}
+function foundationStageStats(){
+  const a=state.rewards.foundation.stageAnswers||{};
+  const answered=Object.keys(a).length;
+  const correct=Object.values(a).filter(Boolean).length;
+  const raw=answered? (correct/11)*100 : 0;
+  const weighted=(raw/100)*85;
+  return {answered,correct,raw,weighted};
+}
+function foundationTestStats(){
+  const raw=state.rewards.foundation.testFinished?(state.rewards.foundation.testScore||0):0;
+  return {raw,weighted:(raw/100)*15};
+}
+function buildingStageStats(){
+  const scores=state.rewards.building.stageScores||{};
+  const vals=Array.from({length:9},(_,i)=>Number(scores[i]||0));
+  const answered=vals.filter(v=>v>0).length;
+  const raw=vals.reduce((a,b)=>a+b,0)/9;
+  const weighted=(raw/100)*85;
+  return {answered,raw,weighted};
+}
+function buildingTestStats(){
+  const raw=state.rewards.building.testFinished?(state.rewards.building.testScore||0):0;
+  return {raw,weighted:(raw/100)*15};
+}
+function sectionFill(key){
+  if(key==='foundation'){
+    const st=foundationStageStats(), tt=foundationTestStats();
+    return Math.round((st.weighted+tt.weighted)*10)/10;
   }
-})();
+  if(key==='building'){
+    const st=buildingStageStats(), tt=buildingTestStats();
+    return Math.round((st.weighted+tt.weighted)*10)/10;
+  }
+  const data=sectionData[key];
+  if(!data) return state.sections[key].score||0;
+  const learningTotal=Math.max(1,data.stages.length-1);
+  const completed=Math.min(state.sections[key].stages||0,learningTotal);
+  const learningFill=(completed/learningTotal)*85;
+  return Math.round(Math.max(learningFill,state.sections[key].score||0)*10)/10;
+}
+function journeyProgress(){
+  const foundation=sectionFill('foundation')*.30;
+  const building=sectionFill('building')*.30;
+  const composition=sectionFill('composition')*.30;
+  const crown=Math.min(100,state.crown||0)*.10;
+  return Math.max(0,Math.min(100,foundation+building+composition+crown));
+}
+function renderJourney(){
+  const value=Math.round(journeyProgress()*10)/10;
+  const fill=$('#journeyFill'), marker=$('#journeyMarker');
+  if(fill) fill.style.width=value+'%';
+  if(marker){ marker.style.right=value+'%'; marker.textContent=(Number.isInteger(value)?value:value.toFixed(1))+'%'; }
+  return value;
+}
+function sectionEarnedGems(key){
+  if(key!=='foundation') return 0;
+  const st=foundationStageStats(), tt=foundationTestStats();
+  return Math.round((st.raw/100)*850)+Math.round((tt.raw/100)*150);
+}
+function syncFoundationGems(){
+  const f=sectionEarnedGems('foundation');
+  const other=0;
+  state.gems=f+other;
+}
+function renderHome(){
+ $('#welcome').textContent=`أهلًا ${state.name || 'يا بطل'}`; $('#gems').textContent=state.gems; $('#foundationGems').textContent=sectionEarnedGems('foundation').toLocaleString('en-US')+' / 1,000';
+ const fills={foundation:sectionFill('foundation'),building:sectionFill('building'),composition:sectionFill('composition')};
+ const overallAvg=Math.round(renderJourney()*10)/10;
+ $('#overall').textContent=(Number.isInteger(overallAvg)?overallAvg:overallAvg.toFixed(1))+'%';
+ $('#star1').style.setProperty('--fill',scoreFill(fills.foundation)+'%'); $('#star2').style.setProperty('--fill',scoreFill(fills.building)+'%'); $('#star3').style.setProperty('--fill',scoreFill(fills.composition)+'%');
+ $('#note1').textContent=fills.foundation+'%'; $('#note2').textContent=fills.building+'%'; $('#note3').textContent=fills.composition+'%';
+ $('#bar-foundation').style.width=fills.foundation+'%'; $('#bar-building').style.width=fills.building+'%'; $('#bar-composition').style.width=fills.composition+'%';
+ const buildOpen=sectionFill('foundation')>=95, compOpen=state.sections.building.score>=95; document.querySelector('[data-section="building"]').classList.toggle('locked',!buildOpen); document.querySelector('[data-section="composition"]').classList.toggle('locked',!compOpen);
+ const ready=sectionFill('foundation')>=95 && state.sections.building.score>=95 && state.sections.composition.score>=95;
+ $('#finalExamBtn').classList.toggle('hidden',!ready);
+ const crownFill = ready ? (state.crown || 8) : 0;
+ $('#crown').style.setProperty('--fill',scoreFill(crownFill)+'%');
+ $('#crown').classList.toggle('ready',state.crown>=95);
+ $('#crownNote').textContent = ready ? (state.crown>=95 ? 'التاج مكتمل' : `${crownFill}%`) : 'يمتلئ بعد فتح الاختبار الشامل';
+}
+const sectionData={
+ foundation:{title:'قسم الأساس',desc:'افهم الضرب من البداية وابنِ أساسك خطوة بخطوة.',stages:['وش يعني ضرب؟','جدول 1','جدول 2','جدول 3','جدول 4','جدول 5','جدول 6','جدول 7','جدول 8','جدول 9','جدول 10','اختبار إتقان القسم']},
+ building:{title:'قسم البناء',desc:'التفكيك ونقاط الارتكاز من 11 إلى 100.',stages:['11–20','21–30','31–40','41–50','51–60','61–70','71–80','81–90','91–100','اختبار إتقان القسم']},
+ composition:{title:'قسم التركيب',desc:'فكّك، اختر رقمًا مريحًا، احسب الأجزاء، ثم ركّب الناتج.',stages:['11–19 × حتى 100','20–29 × 20–29','20–29 × 30–49','20–29 × 50–100','30–49 × 30–49','30–49 × 50–69','30–49 × 70–100','50–69 × 50–69','50–69 × 70–89','50–69 × 90–100','70–89 × 70–89','70–89 × 90–100','90–100 × 90–100','اختبار إتقان القسم']}
+};
+let currentSection='foundation';
+function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const unlocked=i<=state.sections[key].stages || i===0; const isTest=i===d.stages.length-1; el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
+$$('.section-card').forEach(c=>c.onclick=()=>openSection(c.dataset.section)); $('#backHome').onclick=()=>show('screen-home'); $('#backSection').onclick=()=>openSection(currentSection);
+$('#continueJourney').onclick=()=>{if(sectionFill('foundation')<95)return openSection('foundation');if(state.sections.building.score<95)return openSection('building');return openSection('composition')};
+
+function randInt(min,max,avoid=[]){
+  let n; do{n=Math.floor(Math.random()*(max-min+1))+min;}while(avoid.includes(n)); return n;
+}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function numOptions(correct,spread=4){
+  const vals=new Set([correct]);
+  let tries=0;
+  while(vals.size<3&&tries<30){
+    const d=randInt(1,spread); const sign=Math.random()<.5?-1:1; const v=correct+sign*d;
+    if(v>=0) vals.add(v); tries++;
+  }
+  while(vals.size<3) vals.add(correct+vals.size+1);
+  return shuffle([...vals]);
+}
+function visualGroups(groups,items,icon='⚽',container='🧺'){
+  const itemStr=icon.repeat(Math.min(items,10));
+  return `<div class="basket-row">${Array.from({length:groups},()=>`<div class="basket"><div class="basket-icon">${container}</div><div class="items">${itemStr}</div></div>`).join('')}</div>`;
+}
+function applyFoundationVariation(i,box){
+  let correct=null, challenge='', examples='';
+  const mkOpts=(c,spread=4)=>numOptions(c,spread).map(x=>`<button data-a="${x}">${x}</button>`).join('');
+  if(i===0){
+    const g1=randInt(2,4), n1=randInt(2,5), g2=randInt(2,4,[g1]), n2=randInt(2,5,[n1]);
+    examples=`<div class="visual-card"><div class="visual-title">مثال — ${g1} مجموعات، في كل مجموعة ${n1}</div>${visualGroups(g1,n1,'⚽','🧺')}<div class="visual-math">${Array(g1).fill(n1).join(' + ')} = ${g1*n1}<br><strong>${g1} × ${n1} = ${g1*n1}</strong></div></div><div class="visual-card"><div class="visual-title">مثال آخر — ${g2} صناديق، في كل صندوق ${n2}</div>${visualGroups(g2,n2,'🍎','📦')}<div class="visual-math">${Array(g2).fill(n2).join(' + ')} = ${g2*n2}<br><strong>${g2} × ${n2} = ${g2*n2}</strong></div></div>`;
+    const g=randInt(2,5),n=randInt(2,5); correct=g*n;
+    challenge=`<div class="lesson-box"><h2>تأكد إنك فهمت</h2><p>شوف المجموعات ثم اختر العدد الكلي.</p>${visualGroups(g,n,'⚽','🧺')}<div class="count-badges"><span class="count-badge">${g} مجموعات</span><span class="count-badge">${n} في كل مجموعة</span></div><div class="q-options">${mkOpts(correct,5)}</div></div>`;
+  } else if(i===1){
+    const a=randInt(3,9),b=randInt(10,35,[a]);
+    examples=`<div class="example">1 × ${a}<strong>${a}</strong><span>مجموعة واحدة من ${a}</span></div><div class="example">${b} × 1<strong>${b}</strong><span>${b} مجموعات فيها عنصر واحد</span></div><div class="example">1 × ${a+5}<strong>${a+5}</strong><span>العدد يبقى كما هو</span></div>`;
+    const n=randInt(4,30);correct=n; challenge=`<div class="lesson-box"><h2>تحدي جديد</h2><p>${n} × 1 = ؟</p><div class="q-options">${mkOpts(correct,3)}</div></div>`;
+  } else if(i>=2&&i<=9){
+    const table=i, a=randInt(3,9), b=randInt(3,10,[a]), c=randInt(4,12,[a,b]);
+    const explain=(n)=>{
+      if(table===2)return `${n} + ${n}`;
+      if(table===3)return `${2*n} + ${n}`;
+      if(table===4)return `${n} → ${2*n} → ${4*n}`;
+      if(table===5)return `نصف ${10*n}`;
+      if(table===6)return `${5*n} + ${n}`;
+      if(table===7)return `${5*n} + ${2*n}`;
+      if(table===8)return `${n} → ${2*n} → ${4*n} → ${8*n}`;
+      if(table===9)return `${10*n} − ${n}`;
+    };
+    examples=`<div class="example">${table} × ${a}<strong>${table*a}</strong><span>${explain(a)}</span></div><div class="example">${table} × ${b}<strong>${table*b}</strong><span>${explain(b)}</span></div><div class="example">${table} × ${c}<strong>${table*c}</strong><span>${explain(c)}</span></div>`;
+    const n=randInt(3,12);correct=table*n; challenge=`<div class="lesson-box"><h2>تحدي جديد</h2><p>حلها بنفسك ثم اختر الإجابة.</p><div class="question-clean">${table} × ${n} = ؟</div><div class="q-options">${mkOpts(correct,Math.max(4,table))}</div></div>`;
+  } else if(i===10){
+    const a=randInt(2,9),b=randInt(11,39),c=randInt(40,99);
+    examples=`<div class="example">${a} × 10<strong>${a*10}</strong><span>${a} ثم صفر على اليمين</span></div><div class="example">${b} × 10<strong>${b*10}</strong><span>${b} ثم صفر على اليمين</span></div><div class="example">${c} × 10<strong>${c*10}</strong><span>${c} ثم صفر على اليمين</span></div>`;
+    const n=randInt(12,99);correct=n*10; challenge=`<div class="lesson-box"><h2>تحدي جديد</h2><p>استخدم اللي فهمته من الشرح بدون تلميح.</p><div class="question-clean">${n} × 10 = ؟</div><div class="q-options">${mkOpts(correct,20)}</div></div>`;
+  }
+  if(correct===null)return;
+  const demo=box.querySelector('.visual-demo');
+  if(demo&&examples) demo.innerHTML=examples;
+  const grid=box.querySelector('.example-grid');
+  if(grid&&examples) grid.innerHTML=examples;
+  const lessonBoxes=box.querySelectorAll('.lesson-box');
+  if(lessonBoxes.length&&challenge){ lessonBoxes[lessonBoxes.length-1].outerHTML=challenge; }
+  box.dataset.correct=String(correct);
+}
+
+
+function renderMethodCard(md){
+  return `<div class="method-card"><h4>${md.title}</h4><p class="method-intro">${md.line1}</p><div class="method-flow">${md.parts.map((part,idx)=>`<div class="term-stack"><div class="term-top">${part}</div><div class="term-arrow">↓</div><div class="term-bottom">${md.values[idx]}</div></div>${idx<md.parts.length-1?`<div class="term-op">${md.operator}</div>`:''}`).join('')}</div><div class="method-final">${md.combine}</div></div>`;
+}
+
+function buildBuildingLesson(box,stageIndex){
+  const ranges=[[11,20],[21,30],[31,40],[41,50],[51,60],[61,70],[71,80],[81,90],[91,100]];
+  const [lo,hi]=ranges[stageIndex];
+  const lower=Math.floor(lo/10)*10;
+  const upper=Math.ceil(hi/10)*10;
+  const anchors=[lower,upper].filter((v,i,a)=>v>0&&a.indexOf(v)===i);
+  const calcFromLower=(n,m)=>{
+    const a=lower, d=n-a;
+    return {title:`التفكيك من ${a}`, line1:`${n} = ${a} + ${d}`, parts:[`${a} × ${m}`, `${d} × ${m}`], values:[`${a*m}`, `${d*m}`], operator:'+', combine:`${a*m} + ${d*m} = ${n*m}`};
+  };
+  const calcFromUpper=(n,m)=>{
+    const a=upper, d=a-n;
+    return {title:`الرجوع من ${a}`, line1:`${n} = ${a} − ${d}`, parts:[`${a} × ${m}`, `${d} × ${m}`], values:[`${a*m}`, `${d*m}`], operator:'−', combine:`${a*m} − ${d*m} = ${n*m}`};
+  };
+  const calcPlace=(n,m)=>{
+    const tens=Math.floor(n/10)*10, ones=n-tens;
+    return {title:'العشرات + الآحاد', line1:`${n} = ${tens} + ${ones}`, parts:[`${tens} × ${m}`, `${ones} × ${m}`], values:[`${tens*m}`, `${ones*m}`], operator:'+', combine:`${tens*m} + ${ones*m} = ${n*m}`};
+  };
+  const chooseMethods=(n,m)=>{
+    const methods=[calcPlace(n,m)];
+    if(n-lower<=upper-n || n===upper) methods.push(calcFromLower(n,m),calcFromUpper(n,m));
+    else methods.push(calcFromUpper(n,m),calcFromLower(n,m));
+    return methods;
+  };
+  const exNums=[];
+  while(exNums.length<3){const n=randInt(lo,hi); if(!exNums.includes(n))exNums.push(n);}
+  const exMults=[randInt(2,9),randInt(2,9),randInt(2,9)];
+  const examples=exNums.map((n,idx)=>{
+    const m=exMults[idx], methods=shuffle(chooseMethods(n,m)).slice(0,2);
+    return `<div class="visual-card"><div class="visual-title">مثال ${idx+1} — ${n} × ${m}</div><div class="method-grid">${methods.map(md=>renderMethodCard(md)).join('')}</div></div>`;
+  }).join('');
+  const q1n=randInt(lo,hi), q1m=randInt(2,9);
+  let q2n=randInt(lo,hi), q2m=randInt(2,9);
+  while(q2n===q1n && q2m===q1m){q2n=randInt(lo,hi);q2m=randInt(2,9);}
+  const answers=[q1n*q1m,q2n*q2m];
+  const introOptions=[
+    `في هذه المرحلة ما نبي نحفظ نواتج جديدة. نبي نشوف العدد ونحوّله لشيء مريح للعقل.`,
+    `الفكرة هنا: الرقم الكبير ما يخوفنا؛ نفككه أو نقربه لعشرة مريحة ثم نرجع للعدد الأصلي.`,
+    `هدف المرحلة إنك تختار الطريق الأسهل بنفسك: تفكيك، أو اقتراب من العشرة الأدنى، أو رجوع من العشرة الأعلى.`
+  ];
+  const intro=introOptions[randInt(0,introOptions.length-1)];
+  box.innerHTML=`<div class="lesson-box"><h2>${lo}–${hi} — أكثر من طريق للحل</h2><p>${intro}</p><div class="tip"><strong>الفكرة:</strong> ما فيه طريق واحد إجباري. إذا كان العدد قريبًا من ${lower} ابدأ منه، وإذا كان أقرب إلى ${upper} استخدمه، وتقدر دائمًا تفصل العشرات عن الآحاد.</div><div class="visual-demo">${examples}</div><div class="soft-note">في الإعادة تتغير الأمثلة وطرق العرض؛ ركّز على الفكرة نفسها، مو على حفظ المثال.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>حل السؤالين بنفسك بدون خيارات. كل سؤال يقيس نفس الفكرة بأرقام مختلفة.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1n} × ${q1m} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2n} × ${q2m} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div><div class="soft-note">2 من 2 = 100% · 1 من 2 = 50% · 0 من 2 = 0%</div></div>`;
+  box.dataset.answers=JSON.stringify(answers);
+}
+
+function bindTypedPair(box,correctAnswers,onDone){
+  const inputs=Array.from(box.querySelectorAll('.typed-stage-answer'));
+  const btn=box.querySelector('#submitTypedPair');
+  const submit=()=>{
+    const vals=inputs.map(input=>(input.value||'').trim().replace(/[^0-9-]/g,''));
+    if(vals.some(v=>v==='')){alert('جاوب على السؤالين أولًا');return;}
+    const correctCount=vals.reduce((sum,v,i)=>sum+(Number(v)===Number(correctAnswers[i])?1:0),0);
+    const score=correctCount*50;
+    onDone(score,correctCount);
+  };
+  if(btn)btn.onclick=submit;
+  inputs.forEach((input,idx)=>input.onkeydown=e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      if(idx<inputs.length-1)inputs[idx+1].focus(); else submit();
+    }
+  });
+  if(inputs[0])setTimeout(()=>inputs[0].focus(),50);
+}
+
+function generateFoundationTest(){
+  const qs=[];
+  const add=(q,correct,spread=5)=>qs.push([q,numOptions(correct,spread).map(String),String(correct)]);
+  const g=randInt(2,5), it=randInt(2,6); add(`${g} مجموعات، في كل مجموعة ${it} عناصر. كم المجموع؟`,g*it,5);
+  for(let table=1;table<=10;table++){
+    const n=table===10?randInt(11,49):randInt(3,12);
+    add(`${table} × ${n} = ؟`,table*n,Math.max(5,table));
+  }
+  while(qs.length<20){
+    const table=randInt(2,10), n=table===10?randInt(12,79):randInt(3,12);
+    add(`${n} × ${table} = ؟`,table*n,Math.max(5,table));
+  }
+  return shuffle(qs).slice(0,20);
+}
+
+function openLesson(key,i,name){
+ $('#lessonTitle').textContent=name;$('#lessonStep').textContent=`${sectionData[key].title} — المرحلة ${i+1}`; const box=$('#lessonContent');
+ const completeStage=(isCorrect)=>{
+   if(key==='foundation'&&i<11){
+     const answers=state.rewards.foundation.stageAnswers;
+     // Keep the best result for each stage: a retry can improve wrong → correct,
+     // while an already-correct stage never becomes worse.
+     if(!(i in answers)) answers[i]=!!isCorrect;
+     else if(isCorrect) answers[i]=true;
+     state.sections[key].stages=Math.max(state.sections[key].stages,i+1);
+     const st=foundationStageStats();
+     state.sections.foundation.score=Math.round((st.weighted+foundationTestStats().weighted)*10)/10;
+     syncFoundationGems(); save();
+     const verdict=isCorrect?'صحيحة ✅':'خاطئة ❌';
+     alert(`تم تسجيل الإجابة: ${verdict}\nنتيجة المراحل الحالية: ${st.correct}/${st.answered} صحيحة\nالجواهر الحالية: ${sectionEarnedGems('foundation')} / 1,000 💎`);
+     openSection(key); return;
+   }
+   state.sections[key].stages=Math.max(state.sections[key].stages,i+1);save();openSection(key);
+ };
+ const bindAnswer=(correct, hint)=>{if(key==='foundation'&&i<11){applyFoundationVariation(i,box);correct=(box.dataset.correct!==undefined&&box.dataset.correct!=='')?box.dataset.correct:correct;}box.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const isCorrect=b.dataset.a===String(correct);completeStage(isCorrect)});};
+ if(key==='foundation'&&i===0){
+   box.innerHTML=`<div class="lesson-box"><h2>وش يعني ضرب؟</h2><p>قبل الأرقام، خلّنا <strong>نشوف الفكرة بعيننا</strong>. كل سلة تمثل مجموعة، وما بداخلها هو عدد العناصر في كل مجموعة.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 3 سلال، في كل سلة كرتان</div><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽</div></div></div><div class="count-badges"><span class="count-badge">عدد المجموعات: 3</span><span class="count-badge">داخل كل مجموعة: 2</span></div><div class="visual-math">نجمع ما داخل السلال: 2 + 2 + 2 = 6<br><strong>3 × 2 = 6</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 4 صناديق، في كل صندوق 3 تفاحات</div><div class="basket-row"><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎</div></div><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎</div></div><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎</div></div><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎</div></div></div><div class="visual-math">3 + 3 + 3 + 3 = 12<br><strong>4 × 3 = 12</strong></div></div><div class="visual-card"><div class="visual-title">مثال 3 — مجموعتان، في كل مجموعة 5 نجوم</div><div class="basket-row"><div class="basket"><div class="basket-icon">🟦</div><div class="items">⭐⭐⭐⭐⭐</div></div><div class="basket"><div class="basket-icon">🟦</div><div class="items">⭐⭐⭐⭐⭐</div></div></div><div class="visual-math">5 + 5 = 10<br><strong>2 × 5 = 10</strong></div></div></div><div class="tip">القاعدة البسيطة: <strong>العدد الأول = عدد المجموعات</strong>، والعدد الثاني = عدد العناصر داخل كل مجموعة.</div></div><div class="lesson-box"><h2>تأكد إنك فهمت</h2><p>شوف الصورة أولًا، وبعدها اختر المجموع.</p><div class="visual-question"><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div></div><div class="count-badges"><span class="count-badge">4 سلال</span><span class="count-badge">3 كرات في كل سلة</span></div></div><p>كم كرة عندنا كلها؟</p><div class="q-options"><button data-a="9">9</button><button data-a="12">12</button><button data-a="7">7</button></div></div>`;
+   bindAnswer(12,'عدّها كمجموعات: 3 + 3 + 3 + 3 = 12');
+ }
+ else if(key==='foundation'&&i===1){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 1 — مجموعة واحدة فقط</h2><p>إذا كان عندنا <strong>مجموعة واحدة</strong> فقط، فالناتج هو نفس عدد العناصر داخلها. لذلك أي عدد × 1 = نفس العدد.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — سلة واحدة فيها 5 كرات</div><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽⚽</div></div></div><div class="count-badges"><span class="count-badge">عدد المجموعات: 1</span><span class="count-badge">داخل كل مجموعة: 5</span></div><div class="visual-math">لدينا 5 كرات فقط<br><strong>1 × 5 = 5</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 8 مجموعات، في كل مجموعة كرة واحدة</div><div class="basket-row"><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div><div class="basket"><div class="basket-icon">⚪</div><div class="items">1</div></div></div><div class="visual-math"><strong>8 × 1 = 8</strong></div></div></div><div class="tip">القاعدة: <strong>أي عدد × 1 = نفس العدد</strong>. لا نغيّر العدد، فقط نبقيه كما هو.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>في سلة واحدة <strong>7</strong> تفاحات. كم تفاحة عندنا؟</p><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">🍎🍎🍎🍎🍎🍎🍎</div></div></div><div class="q-options"><button data-a="7">7</button><button data-a="1">1</button><button data-a="8">8</button></div></div>`;
+   bindAnswer(7,'لدينا مجموعة واحدة فقط، لذلك العدد يبقى 7');
+ }
+ else if(key==='foundation'&&i===2){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 2 — خذ العدد مرتين</h2><p>الضرب في 2 يعني أن عندنا <strong>مجموعتين متشابهتين</strong>. لذلك نجمع العدد مع نفسه مرة واحدة فقط.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — سلتان، في كل سلة 4 كرات</div><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽</div></div></div><div class="visual-math">4 + 4 = 8<br><strong>2 × 4 = 8</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — صندوقان، في كل صندوق 7 تفاحات</div><div class="basket-row"><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎🍎🍎🍎🍎</div></div><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎🍎🍎🍎🍎</div></div></div><div class="visual-math">7 + 7 = 14<br><strong>2 × 7 = 14</strong></div></div></div><div class="tip">إذا رأيت ×2 فقل: <strong>ضاعف العدد</strong>، أي العدد + نفسه.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>عندك سلتان، في كل سلة 9 كرات. كم كرة عندك؟</p><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽⚽⚽⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽⚽⚽⚽⚽⚽</div></div></div><div class="q-options"><button data-a="16">16</button><button data-a="19">19</button><button data-a="18">18</button></div></div>`;
+   bindAnswer(18,'ضاعف 9: 9 + 9 = 18');
+ }
+ else if(key==='foundation'&&i===3){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 3 — خذ العدد ثلاث مرات</h2><p>في جدول 3 يمكننا أن نستفيد من جدول 2: <strong>نضاعف العدد أولًا، ثم نضيف نفس العدد مرة ثالثة</strong>.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 3 سلال، في كل سلة 4 كرات</div><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽</div></div></div><div class="visual-math">4 + 4 + 4 = 12<br><strong>3 × 4 = 12</strong></div><div class="soft-note">أولًا: 2 × 4 = 8، ثم نضيف 4 مرة أخرى → 12</div></div><div class="visual-card"><div class="visual-title">مثال 2 — 3 مجموعات، في كل مجموعة 6 تفاحات</div><div class="basket-row"><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎🍎🍎🍎</div></div><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎🍎🍎🍎</div></div><div class="basket"><div class="basket-icon">📦</div><div class="items">🍎🍎🍎🍎🍎🍎</div></div></div><div class="visual-math">6 + 6 + 6 = 18<br><strong>3 × 6 = 18</strong></div><div class="soft-note">2 × 6 = 12، ثم نضيف 6 → 18</div></div></div><div class="tip">قاعدة جدول 3: <strong>×2 ثم + العدد</strong>.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>3 سلال، في كل سلة 8 كرات. كم كرة عندنا؟</p><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽⚽⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽⚽⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽⚽⚽⚽⚽⚽</div></div></div><div class="q-options"><button data-a="24">24</button><button data-a="21">21</button><button data-a="27">27</button></div></div>`;
+   bindAnswer(24,'ابدأ بـ 2×8 = 16، ثم أضف 8: 16 + 8 = 24');
+ }
+ else if(key==='foundation'&&i===4){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 4 — المضاعفة مرتين</h2><p>بدل حفظ جدول 4، نفكر فيه بهذه الطريقة: <strong>ضاعف العدد مرة، ثم ضاعف الناتج مرة ثانية</strong>.</p><div class="visual-card"><div class="visual-title">مثال 1 — 4 سلال، في كل سلة 3 كرات</div><div class="basket-row"><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div><div class="basket"><div class="basket-icon">🧺</div><div class="items">⚽⚽⚽</div></div></div><div class="visual-math">3 + 3 + 3 + 3 = 12<br><strong>4 × 3 = 12</strong></div></div><div class="step-seq"><div class="step-card"><small>ابدأ بالعدد</small><strong>5</strong></div><div class="step-card"><small>ضاعف مرة واحدة</small><strong>10</strong></div><div class="step-card"><small>ضاعف مرة ثانية</small><strong>20</strong></div></div><div class="soft-note">يعني: 4 × 5 = 20 لأن 5 → 10 → 20</div><div class="example-grid"><div class="example">4 × 3<strong>3 → 6 → 12</strong></div><div class="example">4 × 5<strong>5 → 10 → 20</strong></div><div class="example">4 × 8<strong>8 → 16 → 32</strong></div></div><div class="tip">إذًا قاعدة جدول 4 هي: <strong>ضاعف العدد مرتين</strong>.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>كم يساوي 4 × 9 ؟</p><div class="mini-check"><div>الخطوة 1: ضاعف 9 → 18</div><div>الخطوة 2: ضاعف 18 → ؟</div></div><div class="q-options"><button data-a="32">32</button><button data-a="40">40</button><button data-a="36">36</button></div></div>`;
+   bindAnswer(36,'ضاعف 9 فيصبح 18، ثم ضاعف 18 فيصبح 36');
+ }
+ else if(key==='foundation'&&i===5){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 5 — نصف جدول 10</h2><p>أسهل طريقة لفهم جدول 5 هي أن نبدأ من جدول 10، ثم نأخذ <strong>النصف</strong>.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 5 × 6</div><div class="step-seq"><div class="step-card"><small>10 × 6</small><strong>60</strong></div><div class="step-card"><small>نصف 60</small><strong>30</strong></div></div><div class="visual-math"><strong>5 × 6 = 30</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 5 × 8</div><div class="step-seq"><div class="step-card"><small>10 × 8</small><strong>80</strong></div><div class="step-card"><small>نصف 80</small><strong>40</strong></div></div><div class="visual-math"><strong>5 × 8 = 40</strong></div></div></div><div class="tip">لاحظ أيضًا: نتائج جدول 5 تنتهي دائمًا بـ <strong>0 أو 5</strong>.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>5 × 9 = ؟</p><div class="mini-check"><div>10 × 9 = 90</div><div>نصف 90 = ؟</div></div><div class="q-options"><button data-a="45">45</button><button data-a="40">40</button><button data-a="50">50</button></div></div>`;
+   bindAnswer(45,'ابدأ من 10×9 = 90، ثم خذ النصف = 45');
+ }
+ else if(key==='foundation'&&i===6){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 6 — جدول 5 ومعه نسخة إضافية</h2><p>بدل حفظ جدول 6، استخدم شيء تعرفه: <strong>×6 = ×5 + نفس العدد مرة واحدة</strong>.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 6 × 4</div><div class="step-seq"><div class="step-card"><small>5 × 4</small><strong>20</strong></div><div class="step-card"><small>أضف 4</small><strong>24</strong></div></div><div class="visual-math"><strong>6 × 4 = 24</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 6 × 7</div><div class="step-seq"><div class="step-card"><small>5 × 7</small><strong>35</strong></div><div class="step-card"><small>أضف 7</small><strong>42</strong></div></div><div class="visual-math"><strong>6 × 7 = 42</strong></div></div></div><div class="tip">قاعدة جدول 6: <strong>×5 ثم + العدد</strong>.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>6 × 8 = ؟</p><div class="mini-check"><div>5 × 8 = 40</div><div>40 + 8 = ؟</div></div><div class="q-options"><button data-a="46">46</button><button data-a="54">54</button><button data-a="48">48</button></div></div>`;
+   bindAnswer(48,'5×8 = 40، ثم أضف 8 فيصبح 48');
+ }
+ else if(key==='foundation'&&i===7){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 7 — اجمع قوتين تعرفهما</h2><p>جدول 7 يصير أسهل إذا قسمناه إلى <strong>5 + 2</strong>. يعني: ×7 = ×5 + ×2.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 7 × 6</div><div class="step-seq"><div class="step-card"><small>5 × 6</small><strong>30</strong></div><div class="step-card"><small>2 × 6</small><strong>12</strong></div><div class="step-card"><small>اجمع</small><strong>42</strong></div></div><div class="visual-math"><strong>7 × 6 = 42</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 7 × 8</div><div class="step-seq"><div class="step-card"><small>5 × 8</small><strong>40</strong></div><div class="step-card"><small>2 × 8</small><strong>16</strong></div><div class="step-card"><small>اجمع</small><strong>56</strong></div></div><div class="visual-math"><strong>7 × 8 = 56</strong></div></div></div><div class="tip">قاعدة جدول 7: <strong>×5 + ×2</strong>. أنت أصلًا تعرف الاثنين.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>7 × 9 = ؟</p><div class="mini-check"><div>5 × 9 = 45</div><div>2 × 9 = 18</div><div>45 + 18 = ؟</div></div><div class="q-options"><button data-a="63">63</button><button data-a="61">61</button><button data-a="72">72</button></div></div>`;
+   bindAnswer(63,'5×9 = 45 و2×9 = 18، والمجموع 63');
+ }
+ else if(key==='foundation'&&i===8){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 8 — ضاعف ثلاث مرات</h2><p>جدول 8 هو امتداد للمضاعفة: <strong>×2 ثم ×2 ثم ×2</strong>.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 8 × 3</div><div class="step-seq"><div class="step-card"><small>ابدأ</small><strong>3</strong></div><div class="step-card"><small>ضاعف</small><strong>6</strong></div><div class="step-card"><small>ضاعف</small><strong>12</strong></div><div class="step-card"><small>ضاعف</small><strong>24</strong></div></div><div class="visual-math"><strong>8 × 3 = 24</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 8 × 6</div><div class="step-seq"><div class="step-card"><small>ابدأ</small><strong>6</strong></div><div class="step-card"><small>ضاعف</small><strong>12</strong></div><div class="step-card"><small>ضاعف</small><strong>24</strong></div><div class="step-card"><small>ضاعف</small><strong>48</strong></div></div><div class="visual-math"><strong>8 × 6 = 48</strong></div></div></div><div class="tip">إذا شفت ×8، فكر: <strong>ضاعف ثلاث مرات</strong>.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>8 × 7 = ؟</p><div class="mini-check"><div>7 → 14</div><div>14 → 28</div><div>28 → ؟</div></div><div class="q-options"><button data-a="54">54</button><button data-a="64">64</button><button data-a="56">56</button></div></div>`;
+   bindAnswer(56,'ضاعف 7 ثلاث مرات: 14 ثم 28 ثم 56');
+ }
+ else if(key==='foundation'&&i===9){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 9 — استخدم 10 ثم ارجع خطوة</h2><p>بدل حفظ جدول 9، استخدم جدول 10: <strong>×9 = ×10 − العدد نفسه</strong>.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">مثال 1 — 9 × 6</div><div class="step-seq"><div class="step-card"><small>10 × 6</small><strong>60</strong></div><div class="step-card"><small>اطرح 6</small><strong>54</strong></div></div><div class="visual-math"><strong>9 × 6 = 54</strong></div></div><div class="visual-card"><div class="visual-title">مثال 2 — 9 × 8</div><div class="step-seq"><div class="step-card"><small>10 × 8</small><strong>80</strong></div><div class="step-card"><small>اطرح 8</small><strong>72</strong></div></div><div class="visual-math"><strong>9 × 8 = 72</strong></div></div></div><div class="tip">قاعدة جدول 9: <strong>اضرب في 10، ثم اطرح نفس العدد</strong>.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>9 × 7 = ؟</p><div class="mini-check"><div>10 × 7 = 70</div><div>70 − 7 = ؟</div></div><div class="q-options"><button data-a="63">63</button><button data-a="61">61</button><button data-a="70">70</button></div></div>`;
+   bindAnswer(63,'10×7 = 70، ثم اطرح 7 = 63');
+ }
+ else if(key==='foundation'&&i===10){
+   box.innerHTML=`<div class="lesson-box"><h2>جدول 10 — افهمها أولًا، ثم استخدم الاختصار</h2><p>نبدأ بالفهم: الضرب في 10 يعني أن العدد يصبح <strong>أكبر بعشرة أضعاف</strong>. لذلك 2 آحاد تتحول إلى 2 عشرات، و27 تتحول إلى 270.</p><div class="visual-demo"><div class="visual-card"><div class="visual-title">الفهم — مثال 1</div><div class="count-badges"><span class="count-badge">2 آحاد</span><span class="count-badge">× 10</span><span class="count-badge">2 عشرات</span></div><div class="visual-math"><strong>2 × 10 = 20</strong></div></div><div class="visual-card"><div class="visual-title">الفهم — مثال 2</div><p style="text-align:center">العدد 27 عندما نضربه في 10 تصبح قيمته أكبر بعشرة أضعاف.</p><div class="step-seq"><div class="step-card"><small>العدد</small><strong>27</strong></div><div class="step-card"><small>× 10</small><strong>270</strong></div></div><div class="visual-math"><strong>27 × 10 = 270</strong></div></div></div><div class="tip"><strong>الاختصار السريع:</strong> إذا ضربت عددًا صحيحًا في 10، ضع <strong>صفرًا على يمين العدد</strong>.</div><div class="example-grid"><div class="example">2 × 10<strong>20</strong><span>2 ثم صفر</span></div><div class="example">7 × 10<strong>70</strong><span>7 ثم صفر</span></div><div class="example">12 × 10<strong>120</strong><span>12 ثم صفر</span></div><div class="example">27 × 10<strong>270</strong><span>27 ثم صفر</span></div><div class="example">35 × 10<strong>350</strong><span>35 ثم صفر</span></div><div class="example">100 × 10<strong>1000</strong><span>100 ثم صفر</span></div></div><div class="soft-note">نحن لا نحفظ الصفر فقط؛ نفهم أولًا أن الضرب في 10 يكبّر قيمة العدد عشر مرات، ثم نستخدم الاختصار.</div></div><div class="lesson-box"><h2>تحدي سريع</h2><p>27 × 10 = ؟</p><div class="mini-check"><div>خذ العدد 27</div><div>ضع صفرًا على يمينه</div></div><div class="q-options"><button data-a="207">207</button><button data-a="271">271</button><button data-a="270">270</button></div></div>`;
+   bindAnswer(270,'استخدم الاختصار بعد الفهم: 27 ثم صفر على اليمين = 270');
+ }
+ else if(key==='building'&&i>=0&&i<=8){
+   buildBuildingLesson(box,i);
+   const answers=JSON.parse(box.dataset.answers||'[]');
+   bindTypedPair(box,answers,(stageScore,correctCount)=>{
+     const prev=Number(state.rewards.building.stageScores[i]||0);
+     state.rewards.building.stageScores[i]=Math.max(prev,stageScore);
+     state.sections.building.stages=Math.max(state.sections.building.stages,i+1);
+     const st=buildingStageStats(), tt=buildingTestStats();
+     state.sections.building.score=Math.round((st.weighted+tt.weighted)*10)/10;
+     save();
+     alert(`تم تسجيل المرحلة ✅\nإجابات صحيحة: ${correctCount} من 2\nنتيجة هذه المحاولة: ${stageScore}%\nأفضل نتيجة محفوظة للمرحلة: ${state.rewards.building.stageScores[i]}%`);
+     openSection(key);
+   });
+ }
+ else if(i===sectionData[key].stages.length-1 && key==='foundation'){
+   const arrangeOptions=(opts,correct,index)=>{
+     const wrong=opts.filter(x=>x!==correct);
+     const pos=index%3;
+     const out=[];
+     let w=0;
+     for(let j=0;j<3;j++) out.push(j===pos?correct:wrong[w++]);
+     return out;
+   };
+   const questions=generateFoundationTest();
+   let qi=0, answers=[];
+   const renderQ=()=>{
+     const q=questions[qi];
+     const shown=shuffle(q[1]);
+     box.innerHTML=`<div class="result"><h2>اختبار إتقان قسم الأساس</h2><p>السؤال <strong>${qi+1}</strong> من ${questions.length}</p><div class="progress"><span style="width:${(qi/questions.length)*100}%"></span></div><div class="lesson-box" style="margin-top:18px"><h2>${q[0]}</h2><div class="q-options">${shown.map(x=>`<button data-test-a="${x}">${x}</button>`).join('')}</div></div><div class="soft-note">لن نظهر الصح والخطأ الآن؛ النتيجة تظهر بعد نهاية الاختبار.</div></div>`;
+     box.querySelectorAll('[data-test-a]').forEach(b=>b.onclick=()=>{answers.push(b.dataset.testA===q[2]);qi++; if(qi<questions.length)renderQ();else finishTest();});
+   };
+   const finishTest=()=>{
+     const correct=answers.filter(Boolean).length;
+     const raw=(correct/questions.length)*100;
+     state.rewards.foundation.testAnswers=answers;
+     state.rewards.foundation.testScore=raw;
+     state.rewards.foundation.testFinished=true;
+     state.sections.foundation.stages=11;
+     const st=foundationStageStats(), tt=foundationTestStats();
+     const final=st.weighted+tt.weighted;
+     state.sections.foundation.score=Math.round(final*10)/10;
+     syncFoundationGems();save();
+     const mastery=final>=95;
+     const message=mastery
+       ? 'أبدعت يا بطل! 🏆 وصلت للإتقان وأكملت النجمة بنجاح ⭐'
+       : 'أنت بطل ⭐ وباقي لك شوي على الإتقان! راجع أخطاءك، وجرّب مرة ثانية… النجمة أقرب مما تتوقع 💪';
+     box.innerHTML=`<div class="result"><h2>نتيجة قسم الأساس ⭐</h2><div class="stats"><div class="stat"><strong>${st.raw.toFixed(1)}٪</strong><span>نتيجة المراحل</span></div><div class="stat"><strong>${st.weighted.toFixed(1)} / 85</strong><span>وزن المراحل</span></div><div class="stat"><strong>${tt.raw.toFixed(1)}٪</strong><span>نتيجة الاختبار</span></div><div class="stat"><strong>${tt.weighted.toFixed(1)} / 15</strong><span>وزن الاختبار</span></div></div><div class="tip"><strong>الإنجاز النهائي: ${final.toFixed(1)}٪</strong><br>الجواهر: ${sectionEarnedGems('foundation')} / 1,000 💎</div><div class="lesson-box" style="margin-top:16px"><h3>${message}</h3></div><div class="actions"><button class="btn btn-primary" id="retryTest">🔄 إعادة الاختبار</button><button class="btn btn-secondary" id="resultHome">العودة للرئيسية</button></div></div>`;
+     setTimeout(()=>{
+       $('#retryTest').onclick=()=>openLesson('foundation',11,'اختبار إتقان القسم');
+       $('#resultHome').onclick=()=>show('screen-home');
+     },0);
+   };
+   renderQ();
+ }
+ else {
+   box.innerHTML=`<div class="lesson-box"><h2>${name}</h2><p>هذه المرحلة التالية في نفس القالب. نكمل تعبئتها بعد اعتماد تجربة أول 5 مراحل.</p><button class="btn btn-secondary" id="markDone">اعتبار المرحلة مكتملة في النموذج</button></div>`;setTimeout(()=>$('#markDone').onclick=()=>{state.sections[key].stages=Math.max(state.sections[key].stages,i+1);state.gems+=10;save();openSection(key)},0)
+ }
+ show('screen-lesson');
+}
+$('#finalExamBtn').onclick=()=>show('screen-final'); $('#demoCrown').onclick=()=>{state.crown=97;save();$('#certName').textContent=state.name;$('#certTitle').textContent=state.gender==='female'?'بطلة الضرب':'بطل الضرب';show('screen-certificate')}; $('#certHome').onclick=()=>show('screen-home');
+if(state.name&&state.intro) show('screen-start');
 </script>
 </body></html>
