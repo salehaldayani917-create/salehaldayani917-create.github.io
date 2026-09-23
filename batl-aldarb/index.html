@@ -438,7 +438,6 @@ function openLesson(key,i,name){
      const st=foundationStageStats();
      state.sections.foundation.score=Math.round((st.weighted+foundationTestStats().weighted)*10)/10;
      syncFoundationGems(); save();
-     alert('تم حفظ إجابتك 👌\nنكمل الرحلة، والنتيجة تظهر لك في النهاية.');
      openSection(key); return;
    }
    state.sections[key].stages=Math.max(state.sections[key].stages,i+1);save();openSection(key);
@@ -498,7 +497,6 @@ function openLesson(key,i,name){
      const st=buildingStageStats(), tt=buildingTestStats();
      state.sections.building.score=Math.round((st.weighted+tt.weighted)*10)/10;
      save();
-     alert('تم حفظ إجاباتك 👌\nنكمل الرحلة، والنتيجة تظهر لك في النهاية.');
      openSection(key);
    });
  }
