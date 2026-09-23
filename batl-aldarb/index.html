@@ -161,6 +161,10 @@ state.rewards.building=state.rewards.building||{};
 state.rewards.building.stageScores=state.rewards.building.stageScores||{};
 state.rewards.building.testScore=state.rewards.building.testScore||0;
 state.rewards.building.testFinished=!!state.rewards.building.testFinished;
+state.rewards.composition=state.rewards.composition||{};
+state.rewards.composition.stageScores=state.rewards.composition.stageScores||{};
+state.rewards.composition.testScore=state.rewards.composition.testScore||0;
+state.rewards.composition.testFinished=!!state.rewards.composition.testFinished;
 function save(){safeStorage.set(STORAGE_KEY,JSON.stringify(state));}
 function show(id){$$('section').forEach(s=>s.classList.add('hidden')); $('#'+id).classList.remove('hidden'); const inJourney=['screen-home','screen-section','screen-lesson','screen-final','screen-certificate'].includes(id); $('#journeyBar').classList.toggle('hidden',!inJourney); if(inJourney) renderJourney(); if(id==='screen-home') renderHome();}
 function bindTap(el,fn){
@@ -215,6 +219,18 @@ function buildingTestStats(){
   const raw=state.rewards.building.testFinished?(state.rewards.building.testScore||0):0;
   return {raw,weighted:(raw/100)*15};
 }
+function compositionStageStats(){
+  const scores=state.rewards.composition.stageScores||{};
+  const vals=Array.from({length:13},(_,i)=>Number(scores[i]||0));
+  const answered=Object.keys(scores).filter(k=>Number(k)>=0&&Number(k)<13).length;
+  const raw=vals.reduce((a,b)=>a+b,0)/13;
+  const weighted=(raw/100)*85;
+  return {answered,raw,weighted};
+}
+function compositionTestStats(){
+  const raw=state.rewards.composition.testFinished?(state.rewards.composition.testScore||0):0;
+  return {raw,weighted:(raw/100)*15};
+}
 function sectionFill(key){
   if(key==='foundation'){
     const st=foundationStageStats(), tt=foundationTestStats();
@@ -222,6 +238,10 @@ function sectionFill(key){
   }
   if(key==='building'){
     const st=buildingStageStats(), tt=buildingTestStats();
+    return Math.round((st.weighted+tt.weighted)*10)/10;
+  }
+  if(key==='composition'){
+    const st=compositionStageStats(), tt=compositionTestStats();
     return Math.round((st.weighted+tt.weighted)*10)/10;
   }
   const data=sectionData[key];
@@ -263,7 +283,7 @@ function renderHome(){
  $('#star1').style.setProperty('--fill',scoreFill(fills.foundation)+'%'); $('#star2').style.setProperty('--fill',scoreFill(fills.building)+'%'); $('#star3').style.setProperty('--fill',scoreFill(fills.composition)+'%');
  $('#note1').textContent=fills.foundation+'%'; $('#note2').textContent=fills.building+'%'; $('#note3').textContent=fills.composition+'%';
  $('#bar-foundation').style.width=fills.foundation+'%'; $('#bar-building').style.width=fills.building+'%'; $('#bar-composition').style.width=fills.composition+'%';
- const buildOpen=sectionFill('foundation')>=95, compOpen=state.sections.building.score>=95; document.querySelector('[data-section="building"]').classList.toggle('locked',!buildOpen); document.querySelector('[data-section="composition"]').classList.toggle('locked',!compOpen);
+ const buildOpen=sectionFill('foundation')>=95, compOpen=true; document.querySelector('[data-section="building"]').classList.toggle('locked',!buildOpen); document.querySelector('[data-section="composition"]').classList.toggle('locked',!compOpen);
  const ready=sectionFill('foundation')>=95 && state.sections.building.score>=95 && state.sections.composition.score>=95;
  $('#finalExamBtn').classList.toggle('hidden',!ready);
  const crownFill = ready ? (state.crown || 8) : 0;
@@ -277,7 +297,7 @@ const sectionData={
  composition:{title:'قسم التركيب',desc:'فكّك، اختر رقمًا مريحًا، احسب الأجزاء، ثم ركّب الناتج.',stages:['11–19 × حتى 100','20–29 × 20–29','20–29 × 30–49','20–29 × 50–100','30–49 × 30–49','30–49 × 50–69','30–49 × 70–100','50–69 × 50–69','50–69 × 70–89','50–69 × 90–100','70–89 × 70–89','70–89 × 90–100','90–100 × 90–100','اختبار إتقان القسم']}
 };
 let currentSection='foundation';
-function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const isTest=i===d.stages.length-1; const unlocked=i<=state.sections[key].stages || i===0 || (key==='building'&&isTest); el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
+function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const isTest=i===d.stages.length-1; const unlocked=i<=state.sections[key].stages || i===0 || (key==='building'&&isTest); el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; if(key==='composition') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
 $$('.section-card').forEach(c=>c.onclick=()=>openSection(c.dataset.section)); $('#backHome').onclick=()=>show('screen-home'); $('#backSection').onclick=()=>openSection(currentSection);
 $('#continueJourney').onclick=()=>{if(sectionFill('foundation')<95)return openSection('foundation');if(state.sections.building.score<95)return openSection('building');return openSection('composition')};
 
@@ -398,6 +418,51 @@ function buildBuildingLesson(box,stageIndex){
   ];
   const intro=introOptions[randInt(0,introOptions.length-1)];
   box.innerHTML=`<div class="lesson-box"><h2>${lo}–${hi} — أكثر من طريق للحل</h2><p>${intro}</p><div class="tip"><strong>الفكرة:</strong> ما فيه طريق واحد إجباري. إذا كان العدد قريبًا من ${lower} ابدأ منه، وإذا كان أقرب إلى ${upper} استخدمه، وتقدر دائمًا تفصل العشرات عن الآحاد.</div><div class="visual-demo">${examples}</div><div class="soft-note">في الإعادة تتغير الأمثلة وطرق العرض؛ ركّز على الفكرة نفسها، مو على حفظ المثال.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>حل السؤالين بنفسك بدون خيارات. كل سؤال يقيس نفس الفكرة بأرقام مختلفة.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1n} × ${q1m} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2n} × ${q2m} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div><div class="soft-note">2 من 2 = 100% · 1 من 2 = 50% · 0 من 2 = 0%</div></div>`;
+  box.dataset.answers=JSON.stringify(answers);
+}
+
+function buildCompositionLesson(box,stageIndex){
+  if(stageIndex!==0)return;
+  const calcByFirst=(a,b)=>{
+    const ones=a-10;
+    return {title:'فكّك العدد الأول',line1:`${a} = 10 + ${ones}`,parts:[`${b} × 10`,`${b} × ${ones}`],values:[`${b*10}`,`${b*ones}`],operator:'+',combine:`${b*10} + ${b*ones} = ${a*b}`};
+  };
+  const calcBySecond=(a,b)=>{
+    const tens=Math.floor(b/10)*10, ones=b-tens;
+    if(ones===0){
+      return {title:'استخدم العشرات مباشرة',line1:`${b} = ${tens}`,parts:[`${a} × ${tens}`],values:[`${a*tens}`],operator:'+',combine:`${a*tens} = ${a*b}`};
+    }
+    return {title:'فكّك العدد الثاني',line1:`${b} = ${tens} + ${ones}`,parts:[`${a} × ${tens}`,`${a} × ${ones}`],values:[`${a*tens}`,`${a*ones}`],operator:'+',combine:`${a*tens} + ${a*ones} = ${a*b}`};
+  };
+  const calcNear20=(a,b)=>{
+    const d=20-a;
+    return {title:'استخدم 20 ثم ارجع',line1:`${a} = 20 − ${d}`,parts:[`${b} × 20`,`${b} × ${d}`],values:[`${b*20}`,`${b*d}`],operator:'−',combine:`${b*20} − ${b*d} = ${a*b}`};
+  };
+  const methodsFor=(a,b)=>{
+    const methods=[calcByFirst(a,b),calcBySecond(a,b)];
+    if(a>=17)methods.push(calcNear20(a,b));
+    return shuffle(methods).slice(0,2);
+  };
+  const examples=[];
+  const used=new Set();
+  while(examples.length<3){
+    const a=randInt(11,19), b=randInt(12,99);
+    const key=a+'x'+b;
+    if(used.has(key))continue;
+    used.add(key);
+    examples.push({a,b});
+  }
+  const exampleHtml=examples.map((ex,idx)=>`<div class="visual-card"><div class="visual-title">مثال ${idx+1} — ${ex.a} × ${ex.b}</div><div class="method-grid">${methodsFor(ex.a,ex.b).map(md=>renderMethodCard(md)).join('')}</div></div>`).join('');
+  const q1a=randInt(11,19),q1b=randInt(12,100);
+  let q2a=randInt(11,19),q2b=randInt(12,100);
+  while(q1a===q2a&&q1b===q2b){q2a=randInt(11,19);q2b=randInt(12,100);}
+  const answers=[q1a*q1b,q2a*q2b];
+  const intros=[
+    'الحين نركّب مهاراتك السابقة مع بعض. ما نحل الرقمين دفعة واحدة؛ نفكك واحدًا منهما إلى أجزاء تعرف تتعامل معها.',
+    'قسم التركيب يعتمد على شيء أنت تعرفه أصلًا: حوّل العملية الكبيرة إلى عمليتين أصغر، ثم اجمع الناتجين.',
+    'إذا شفت عددين كبيرين، ابحث عن 10 أو 20 أو عشرات مريحة. بعدها احسب الأجزاء وركّب الناتج.'
+  ];
+  box.innerHTML=`<div class="lesson-box"><h2>11–19 × حتى 100 — ركّب الناتج من أجزاء</h2><p>${intros[randInt(0,intros.length-1)]}</p><div class="tip"><strong>الفكرة:</strong> فكّك العدد إلى جزء مريح. مثال: 14 = 10 + 4، أو إذا كان 19 فممكن تستخدم 20 − 1. كل طريق صحيح إذا أوصلك للحل بسهولة.</div><div class="visual-demo">${exampleHtml}</div><div class="soft-note">في كل إعادة تتغير الأمثلة وترتيب طرق الحل. لا تحفظ المثال؛ اختَر الطريق الأسهل لك.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>الحين حل بنفسك بدون خيارات أو تلميحات.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1a} × ${q1b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2a} × ${q2b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div></div>`;
   box.dataset.answers=JSON.stringify(answers);
 }
 
@@ -541,6 +606,19 @@ function openLesson(key,i,name){
      state.sections.building.stages=Math.max(state.sections.building.stages,i+1);
      const st=buildingStageStats(), tt=buildingTestStats();
      state.sections.building.score=Math.round((st.weighted+tt.weighted)*10)/10;
+     save();
+     openSection(key);
+   });
+ }
+ else if(key==='composition'&&i===0){
+   buildCompositionLesson(box,i);
+   const answers=JSON.parse(box.dataset.answers||'[]');
+   bindTypedPair(box,answers,(stageScore)=>{
+     const prev=Number(state.rewards.composition.stageScores[i]||0);
+     state.rewards.composition.stageScores[i]=Math.max(prev,stageScore);
+     state.sections.composition.stages=Math.max(state.sections.composition.stages,i+1);
+     const st=compositionStageStats(),tt=compositionTestStats();
+     state.sections.composition.score=Math.round((st.weighted+tt.weighted)*10)/10;
      save();
      openSection(key);
    });
