@@ -422,47 +422,74 @@ function buildBuildingLesson(box,stageIndex){
 }
 
 function buildCompositionLesson(box,stageIndex){
-  if(stageIndex!==0)return;
-  const calcByFirst=(a,b)=>{
-    const ones=a-10;
-    return {title:'فكّك العدد الأول',line1:`${a} = 10 + ${ones}`,parts:[`${b} × 10`,`${b} × ${ones}`],values:[`${b*10}`,`${b*ones}`],operator:'+',combine:`${b*10} + ${b*ones} = ${a*b}`};
+  const configs=[
+    {a:[11,19],b:[12,100],title:'11–19 × حتى 100'},
+    {a:[20,29],b:[20,29],title:'20–29 × 20–29'}
+  ];
+  const cfg=configs[stageIndex];
+  if(!cfg)return;
+
+  const splitTens=(n)=>[Math.floor(n/10)*10,n%10];
+
+  const methodSplitBoth=(a,b)=>{
+    const [at,ao]=splitTens(a),[bt,bo]=splitTens(b);
+    const parts=[`${at} × ${bt}`,`${at} × ${bo}`,`${ao} × ${bt}`,`${ao} × ${bo}`];
+    const values=[at*bt,at*bo,ao*bt,ao*bo];
+    return {title:'فكّك العددين',line1:`${a} = ${at} + ${ao} ، ${b} = ${bt} + ${bo}`,parts,values:values.map(String),operator:'+',combine:`${values.join(' + ')} = ${a*b}`};
   };
-  const calcBySecond=(a,b)=>{
-    const tens=Math.floor(b/10)*10, ones=b-tens;
-    if(ones===0){
-      return {title:'استخدم العشرات مباشرة',line1:`${b} = ${tens}`,parts:[`${a} × ${tens}`],values:[`${a*tens}`],operator:'+',combine:`${a*tens} = ${a*b}`};
-    }
-    return {title:'فكّك العدد الثاني',line1:`${b} = ${tens} + ${ones}`,parts:[`${a} × ${tens}`,`${a} × ${ones}`],values:[`${a*tens}`,`${a*ones}`],operator:'+',combine:`${a*tens} + ${a*ones} = ${a*b}`};
+
+  const methodSplitOne=(a,b)=>{
+    const [bt,bo]=splitTens(b);
+    return {title:'فكّك عددًا واحدًا',line1:`${b} = ${bt} + ${bo}`,parts:[`${a} × ${bt}`,`${a} × ${bo}`],values:[String(a*bt),String(a*bo)],operator:'+',combine:`${a*bt} + ${a*bo} = ${a*b}`};
   };
-  const calcNear20=(a,b)=>{
+
+  const methodNear30=(a,b)=>{
+    const d=30-b;
+    return {title:'قرّب إلى 30 ثم ارجع',line1:`${b} = 30 − ${d}`,parts:[`${a} × 30`,`${a} × ${d}`],values:[String(a*30),String(a*d)],operator:'−',combine:`${a*30} − ${a*d} = ${a*b}`};
+  };
+
+  const methodTeenFirst=(a,b)=>{
+    const d=a-10;
+    return {title:'فكّك العدد الأول',line1:`${a} = 10 + ${d}`,parts:[`${b} × 10`,`${b} × ${d}`],values:[String(b*10),String(b*d)],operator:'+',combine:`${b*10} + ${b*d} = ${a*b}`};
+  };
+
+  const methodNear20=(a,b)=>{
     const d=20-a;
-    return {title:'استخدم 20 ثم ارجع',line1:`${a} = 20 − ${d}`,parts:[`${b} × 20`,`${b} × ${d}`],values:[`${b*20}`,`${b*d}`],operator:'−',combine:`${b*20} − ${b*d} = ${a*b}`};
+    return {title:'استخدم 20 ثم ارجع',line1:`${a} = 20 − ${d}`,parts:[`${b} × 20`,`${b} × ${d}`],values:[String(b*20),String(b*d)],operator:'−',combine:`${b*20} − ${b*d} = ${a*b}`};
   };
+
   const methodsFor=(a,b)=>{
-    const methods=[calcByFirst(a,b),calcBySecond(a,b)];
-    if(a>=17)methods.push(calcNear20(a,b));
+    if(stageIndex===0){
+      const methods=[methodTeenFirst(a,b),methodSplitOne(a,b)];
+      if(a>=17)methods.push(methodNear20(a,b));
+      return shuffle(methods).slice(0,2);
+    }
+    const methods=[methodSplitOne(a,b),methodSplitBoth(a,b)];
+    if(b>=27)methods.push(methodNear30(a,b));
     return shuffle(methods).slice(0,2);
   };
-  const examples=[];
-  const used=new Set();
+
+  const examples=[],used=new Set();
   while(examples.length<3){
-    const a=randInt(11,19), b=randInt(12,99);
-    const key=a+'x'+b;
-    if(used.has(key))continue;
-    used.add(key);
-    examples.push({a,b});
+    const a=randInt(cfg.a[0],cfg.a[1]),b=randInt(cfg.b[0],cfg.b[1]);
+    const key=a+'x'+b;if(used.has(key))continue;used.add(key);examples.push({a,b});
   }
   const exampleHtml=examples.map((ex,idx)=>`<div class="visual-card"><div class="visual-title">مثال ${idx+1} — ${ex.a} × ${ex.b}</div><div class="method-grid">${methodsFor(ex.a,ex.b).map(md=>renderMethodCard(md)).join('')}</div></div>`).join('');
-  const q1a=randInt(11,19),q1b=randInt(12,100);
-  let q2a=randInt(11,19),q2b=randInt(12,100);
-  while(q1a===q2a&&q1b===q2b){q2a=randInt(11,19);q2b=randInt(12,100);}
+
+  const q1a=randInt(cfg.a[0],cfg.a[1]),q1b=randInt(cfg.b[0],cfg.b[1]);
+  let q2a=randInt(cfg.a[0],cfg.a[1]),q2b=randInt(cfg.b[0],cfg.b[1]);
+  while(q1a===q2a&&q1b===q2b){q2a=randInt(cfg.a[0],cfg.a[1]);q2b=randInt(cfg.b[0],cfg.b[1]);}
   const answers=[q1a*q1b,q2a*q2b];
-  const intros=[
-    'الحين نركّب مهاراتك السابقة مع بعض. ما نحل الرقمين دفعة واحدة؛ نفكك واحدًا منهما إلى أجزاء تعرف تتعامل معها.',
-    'قسم التركيب يعتمد على شيء أنت تعرفه أصلًا: حوّل العملية الكبيرة إلى عمليتين أصغر، ثم اجمع الناتجين.',
-    'إذا شفت عددين كبيرين، ابحث عن 10 أو 20 أو عشرات مريحة. بعدها احسب الأجزاء وركّب الناتج.'
-  ];
-  box.innerHTML=`<div class="lesson-box"><h2>11–19 × حتى 100 — ركّب الناتج من أجزاء</h2><p>${intros[randInt(0,intros.length-1)]}</p><div class="tip"><strong>الفكرة:</strong> فكّك العدد إلى جزء مريح. مثال: 14 = 10 + 4، أو إذا كان 19 فممكن تستخدم 20 − 1. كل طريق صحيح إذا أوصلك للحل بسهولة.</div><div class="visual-demo">${exampleHtml}</div><div class="soft-note">في كل إعادة تتغير الأمثلة وترتيب طرق الحل. لا تحفظ المثال؛ اختَر الطريق الأسهل لك.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>الحين حل بنفسك بدون خيارات أو تلميحات.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1a} × ${q1b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2a} × ${q2b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div></div>`;
+
+  const intro=stageIndex===0
+    ? 'نركّب مهاراتك السابقة: نفكك واحدًا من العددين إلى أجزاء مريحة، ثم نجمع النواتج.'
+    : 'الحين العددين كلهم في العشرينات. لا تحاول تضربهم دفعة وحدة؛ فكّك واحدًا أو الاثنين إلى عشرات وآحاد، ثم ركّب الناتج.';
+
+  const tip=stageIndex===0
+    ? 'مثال: 14 = 10 + 4، وإذا كان العدد قريبًا من 20 تقدر تستخدم 20 − الفرق.'
+    : 'مثال: 23 × 27 تقدر تسوي 23 × (20 + 7)، أو تفكك العددين، وإذا كان أحدهما قريب من 30 تستخدم 30 − الفرق.';
+
+  box.innerHTML=`<div class="lesson-box"><h2>${cfg.title} — ركّب الناتج من أجزاء</h2><p>${intro}</p><div class="tip"><strong>الفكرة:</strong> ${tip}</div><div class="visual-demo">${exampleHtml}</div><div class="soft-note">في الإعادة تتغير الأمثلة وطرق العرض. اختَر الطريق الأسهل لك.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>حل بنفسك بدون خيارات.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1a} × ${q1b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2a} × ${q2b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div></div>`;
   box.dataset.answers=JSON.stringify(answers);
 }
 
@@ -610,7 +637,7 @@ function openLesson(key,i,name){
      openSection(key);
    });
  }
- else if(key==='composition'&&i===0){
+ else if(key==='composition'&&i>=0&&i<=1){
    buildCompositionLesson(box,i);
    const answers=JSON.parse(box.dataset.answers||'[]');
    bindTypedPair(box,answers,(stageScore)=>{
