@@ -297,7 +297,7 @@ const sectionData={
  composition:{title:'قسم التركيب',desc:'فكّك، اختر رقمًا مريحًا، احسب الأجزاء، ثم ركّب الناتج.',stages:['11–19 × حتى 100','20–29 × 20–29','20–29 × 30–49','20–29 × 50–100','30–49 × 30–49','30–49 × 50–69','30–49 × 70–100','50–69 × 50–69','50–69 × 70–89','50–69 × 90–100','70–89 × 70–89','70–89 × 90–100','90–100 × 90–100','اختبار إتقان القسم']}
 };
 let currentSection='foundation';
-function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const isTest=i===d.stages.length-1; const unlocked=i<=state.sections[key].stages || i===0 || (key==='building'&&isTest); el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; if(key==='composition') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
+function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const isTest=i===d.stages.length-1; const unlocked=i<=state.sections[key].stages || i===0 || (key==='building'&&isTest) || (key==='composition'&&!isTest); el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; if(key==='composition') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
 $$('.section-card').forEach(c=>c.onclick=()=>openSection(c.dataset.section)); $('#backHome').onclick=()=>show('screen-home'); $('#backSection').onclick=()=>openSection(currentSection);
 $('#continueJourney').onclick=()=>{if(sectionFill('foundation')<95)return openSection('foundation');if(state.sections.building.score<95)return openSection('building');return openSection('composition')};
 
@@ -423,49 +423,58 @@ function buildBuildingLesson(box,stageIndex){
 
 function buildCompositionLesson(box,stageIndex){
   const configs=[
-    {a:[11,19],b:[12,100],title:'11–19 × حتى 100'},
-    {a:[20,29],b:[20,29],title:'20–29 × 20–29'}
+    {a:[11,19],b:[11,100],title:'11–19 × حتى 100'},
+    {a:[20,29],b:[20,29],title:'20–29 × 20–29'},
+    {a:[20,29],b:[30,49],title:'20–29 × 30–49'},
+    {a:[20,29],b:[50,100],title:'20–29 × 50–100'},
+    {a:[30,49],b:[30,49],title:'30–49 × 30–49'},
+    {a:[30,49],b:[50,69],title:'30–49 × 50–69'},
+    {a:[30,49],b:[70,100],title:'30–49 × 70–100'},
+    {a:[50,69],b:[50,69],title:'50–69 × 50–69'},
+    {a:[50,69],b:[70,89],title:'50–69 × 70–89'},
+    {a:[50,69],b:[90,100],title:'50–69 × 90–100'},
+    {a:[70,89],b:[70,89],title:'70–89 × 70–89'},
+    {a:[70,89],b:[90,100],title:'70–89 × 90–100'},
+    {a:[90,100],b:[90,100],title:'90–100 × 90–100'}
   ];
   const cfg=configs[stageIndex];
   if(!cfg)return;
 
-  const splitTens=(n)=>[Math.floor(n/10)*10,n%10];
+  const splitTens=n=>[Math.floor(n/10)*10,n%10];
 
-  const methodSplitBoth=(a,b)=>{
-    const [at,ao]=splitTens(a),[bt,bo]=splitTens(b);
-    const parts=[`${at} × ${bt}`,`${at} × ${bo}`,`${ao} × ${bt}`,`${ao} × ${bo}`];
-    const values=[at*bt,at*bo,ao*bt,ao*bo];
-    return {title:'فكّك العددين',line1:`${a} = ${at} + ${ao} ، ${b} = ${bt} + ${bo}`,parts,values:values.map(String),operator:'+',combine:`${values.join(' + ')} = ${a*b}`};
-  };
-
-  const methodSplitOne=(a,b)=>{
+  const splitSecond=(a,b)=>{
     const [bt,bo]=splitTens(b);
-    return {title:'فكّك عددًا واحدًا',line1:`${b} = ${bt} + ${bo}`,parts:[`${a} × ${bt}`,`${a} × ${bo}`],values:[String(a*bt),String(a*bo)],operator:'+',combine:`${a*bt} + ${a*bo} = ${a*b}`};
+    if(bo===0) return {title:'استخدم العشرات مباشرة',line1:`${b} عدد مريح`,parts:[`${a} × ${bt}`],values:[String(a*bt)],operator:'+',combine:`${a*bt} = ${a*b}`};
+    return {title:'فكّك العدد الثاني',line1:`${b} = ${bt} + ${bo}`,parts:[`${a} × ${bt}`,`${a} × ${bo}`],values:[String(a*bt),String(a*bo)],operator:'+',combine:`${a*bt} + ${a*bo} = ${a*b}`};
   };
 
-  const methodNear30=(a,b)=>{
-    const d=30-b;
-    return {title:'قرّب إلى 30 ثم ارجع',line1:`${b} = 30 − ${d}`,parts:[`${a} × 30`,`${a} × ${d}`],values:[String(a*30),String(a*d)],operator:'−',combine:`${a*30} − ${a*d} = ${a*b}`};
+  const splitFirst=(a,b)=>{
+    const [at,ao]=splitTens(a);
+    if(ao===0) return {title:'استخدم العشرات مباشرة',line1:`${a} عدد مريح`,parts:[`${b} × ${at}`],values:[String(b*at)],operator:'+',combine:`${b*at} = ${a*b}`};
+    return {title:'فكّك العدد الأول',line1:`${a} = ${at} + ${ao}`,parts:[`${b} × ${at}`,`${b} × ${ao}`],values:[String(b*at),String(b*ao)],operator:'+',combine:`${b*at} + ${b*ao} = ${a*b}`};
   };
 
-  const methodTeenFirst=(a,b)=>{
-    const d=a-10;
-    return {title:'فكّك العدد الأول',line1:`${a} = 10 + ${d}`,parts:[`${b} × 10`,`${b} × ${d}`],values:[String(b*10),String(b*d)],operator:'+',combine:`${b*10} + ${b*d} = ${a*b}`};
+  const nearestAnchorMethod=(a,b)=>{
+    let anchor=Math.round(b/10)*10;
+    anchor=Math.max(10,Math.min(100,anchor));
+    if(anchor===b) anchor=b>=100?90:b+10;
+    const d=Math.abs(anchor-b);
+    if(anchor>b){
+      return {title:`استخدم ${anchor} ثم ارجع`,line1:`${b} = ${anchor} − ${d}`,parts:[`${a} × ${anchor}`,`${a} × ${d}`],values:[String(a*anchor),String(a*d)],operator:'−',combine:`${a*anchor} − ${a*d} = ${a*b}`};
+    }
+    return {title:`ابدأ من ${anchor} ثم زد`,line1:`${b} = ${anchor} + ${d}`,parts:[`${a} × ${anchor}`,`${a} × ${d}`],values:[String(a*anchor),String(a*d)],operator:'+',combine:`${a*anchor} + ${a*d} = ${a*b}`};
   };
 
-  const methodNear20=(a,b)=>{
-    const d=20-a;
-    return {title:'استخدم 20 ثم ارجع',line1:`${a} = 20 − ${d}`,parts:[`${b} × 20`,`${b} × ${d}`],values:[String(b*20),String(b*d)],operator:'−',combine:`${b*20} − ${b*d} = ${a*b}`};
+  const nearHundred=(a,b)=>{
+    const target=b>=90?b:a;
+    const other=b>=90?a:b;
+    const d=100-target;
+    return {title:'قريب من 100',line1:`${target} = 100 − ${d}`,parts:[`${other} × 100`,`${other} × ${d}`],values:[String(other*100),String(other*d)],operator:'−',combine:`${other*100} − ${other*d} = ${a*b}`};
   };
 
   const methodsFor=(a,b)=>{
-    if(stageIndex===0){
-      const methods=[methodTeenFirst(a,b),methodSplitOne(a,b)];
-      if(a>=17)methods.push(methodNear20(a,b));
-      return shuffle(methods).slice(0,2);
-    }
-    const methods=[methodSplitOne(a,b),methodSplitBoth(a,b)];
-    if(b>=27)methods.push(methodNear30(a,b));
+    const methods=[splitSecond(a,b),splitFirst(a,b),nearestAnchorMethod(a,b)];
+    if(a>=90||b>=90)methods.push(nearHundred(a,b));
     return shuffle(methods).slice(0,2);
   };
 
@@ -481,15 +490,16 @@ function buildCompositionLesson(box,stageIndex){
   while(q1a===q2a&&q1b===q2b){q2a=randInt(cfg.a[0],cfg.a[1]);q2b=randInt(cfg.b[0],cfg.b[1]);}
   const answers=[q1a*q1b,q2a*q2b];
 
-  const intro=stageIndex===0
-    ? 'نركّب مهاراتك السابقة: نفكك واحدًا من العددين إلى أجزاء مريحة، ثم نجمع النواتج.'
-    : 'الحين العددين كلهم في العشرينات. لا تحاول تضربهم دفعة وحدة؛ فكّك واحدًا أو الاثنين إلى عشرات وآحاد، ثم ركّب الناتج.';
+  const introOptions=[
+    'لا تضرب العددين دفعة واحدة. فكّك واحدًا منهما إلى عشرات وآحاد، واحسب الأجزاء ثم اجمع.',
+    'دور أولًا على العدد المريح: عشرات كاملة أو رقم قريب منها، وبعدها ركّب الناتج.',
+    'كلما كبرت الأرقام، نفس الفكرة تبقى: بسّط العملية الكبيرة إلى عمليات أصغر تعرفها.'
+  ];
+  const tip=stageIndex>=9
+    ? 'الأعداد هنا قريبة من 100 أحيانًا؛ جرّب 100 − الفرق إذا كان أقصر، أو استخدم العشرات والآحاد.'
+    : 'تقدر تفكك العدد الأول أو الثاني، أو تستخدم أقرب عشرة إذا كان الطريق أقصر. اختر الأسهل لك.';
 
-  const tip=stageIndex===0
-    ? 'مثال: 14 = 10 + 4، وإذا كان العدد قريبًا من 20 تقدر تستخدم 20 − الفرق.'
-    : 'مثال: 23 × 27 تقدر تسوي 23 × (20 + 7)، أو تفكك العددين، وإذا كان أحدهما قريب من 30 تستخدم 30 − الفرق.';
-
-  box.innerHTML=`<div class="lesson-box"><h2>${cfg.title} — ركّب الناتج من أجزاء</h2><p>${intro}</p><div class="tip"><strong>الفكرة:</strong> ${tip}</div><div class="visual-demo">${exampleHtml}</div><div class="soft-note">في الإعادة تتغير الأمثلة وطرق العرض. اختَر الطريق الأسهل لك.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>حل بنفسك بدون خيارات.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1a} × ${q1b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2a} × ${q2b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div></div>`;
+  box.innerHTML=`<div class="lesson-box"><h2>${cfg.title} — ركّب الناتج من أجزاء</h2><p>${introOptions[randInt(0,introOptions.length-1)]}</p><div class="tip"><strong>الفكرة:</strong> ${tip}</div><div class="visual-demo">${exampleHtml}</div><div class="soft-note">في الإعادة تتغير الأمثلة وطرق العرض. ركّز على الفكرة ولا تحفظ الأرقام.</div></div><div class="lesson-box"><h2>تثبيت الدرس — سؤالان</h2><p>حل بنفسك بدون خيارات أو تلميحات.</p><div class="visual-card"><div class="visual-title">السؤال 1 من 2</div><div class="question-clean">${q1a} × ${q1b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="0" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="visual-card"><div class="visual-title">السؤال 2 من 2</div><div class="question-clean">${q2a} × ${q2b} = ؟</div><div class="answer-entry"><input class="typed-stage-answer" data-q="1" inputmode="numeric" autocomplete="off" placeholder="اكتب الناتج"></div></div><div class="answer-entry"><button class="btn btn-primary" id="submitTypedPair">تأكيد الإجابتين</button></div></div>`;
   box.dataset.answers=JSON.stringify(answers);
 }
 
@@ -637,7 +647,7 @@ function openLesson(key,i,name){
      openSection(key);
    });
  }
- else if(key==='composition'&&i>=0&&i<=1){
+ else if(key==='composition'&&i>=0&&i<=12){
    buildCompositionLesson(box,i);
    const answers=JSON.parse(box.dataset.answers||'[]');
    bindTypedPair(box,answers,(stageScore)=>{
