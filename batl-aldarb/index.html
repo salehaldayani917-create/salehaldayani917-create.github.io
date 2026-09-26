@@ -165,6 +165,24 @@ state.rewards.composition=state.rewards.composition||{};
 state.rewards.composition.stageScores=state.rewards.composition.stageScores||{};
 state.rewards.composition.testScore=state.rewards.composition.testScore||0;
 state.rewards.composition.testFinished=!!state.rewards.composition.testFinished;
+const params=new URLSearchParams(window.location.search);
+if(params.get('studyReset')==='1'){
+  const keepName=state.name||'';
+  const keepGender=state.gender||'male';
+  state.name=keepName;
+  state.gender=keepGender;
+  state.intro=true;
+  state.gems=0;
+  state.sections={foundation:{score:0,stages:0},building:{score:0,stages:0},composition:{score:0,stages:0}};
+  state.crown=0;
+  state.rewards={
+    foundation:{stageAnswers:{},stageScores:{},testAnswers:[],testScore:0,testFinished:false},
+    building:{stageScores:{},testScore:0,testFinished:false},
+    composition:{stageScores:{},testScore:0,testFinished:false}
+  };
+  safeStorage.set(STORAGE_KEY,JSON.stringify(state));
+  history.replaceState({},document.title,window.location.pathname);
+}
 function save(){safeStorage.set(STORAGE_KEY,JSON.stringify(state));}
 function show(id){$$('section').forEach(s=>s.classList.add('hidden')); $('#'+id).classList.remove('hidden'); const inJourney=['screen-home','screen-section','screen-lesson','screen-final','screen-certificate'].includes(id); $('#journeyBar').classList.toggle('hidden',!inJourney); if(inJourney) renderJourney(); if(id==='screen-home') renderHome();}
 function bindTap(el,fn){
@@ -283,7 +301,7 @@ function renderHome(){
  $('#star1').style.setProperty('--fill',scoreFill(fills.foundation)+'%'); $('#star2').style.setProperty('--fill',scoreFill(fills.building)+'%'); $('#star3').style.setProperty('--fill',scoreFill(fills.composition)+'%');
  $('#note1').textContent=fills.foundation+'%'; $('#note2').textContent=fills.building+'%'; $('#note3').textContent=fills.composition+'%';
  $('#bar-foundation').style.width=fills.foundation+'%'; $('#bar-building').style.width=fills.building+'%'; $('#bar-composition').style.width=fills.composition+'%';
- const buildOpen=sectionFill('foundation')>=95, compOpen=true; document.querySelector('[data-section="building"]').classList.toggle('locked',!buildOpen); document.querySelector('[data-section="composition"]').classList.toggle('locked',!compOpen);
+ const buildOpen=sectionFill('foundation')>=95, compOpen=state.sections.building.score>=95; document.querySelector('[data-section="building"]').classList.toggle('locked',!buildOpen); document.querySelector('[data-section="composition"]').classList.toggle('locked',!compOpen);
  const ready=sectionFill('foundation')>=95 && state.sections.building.score>=95 && state.sections.composition.score>=95;
  $('#finalExamBtn').classList.toggle('hidden',!ready);
  const crownFill = ready ? (state.crown || 8) : 0;
@@ -297,7 +315,7 @@ const sectionData={
  composition:{title:'قسم التركيب',desc:'فكّك، اختر رقمًا مريحًا، احسب الأجزاء، ثم ركّب الناتج.',stages:['11–19 × حتى 100','20–29 × 20–29','20–29 × 30–49','20–29 × 50–100','30–49 × 30–49','30–49 × 50–69','30–49 × 70–100','50–69 × 50–69','50–69 × 70–89','50–69 × 90–100','70–89 × 70–89','70–89 × 90–100','90–100 × 90–100','اختبار إتقان القسم']}
 };
 let currentSection='foundation';
-function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const isTest=i===d.stages.length-1; const unlocked=i<=state.sections[key].stages || i===0 || (key==='building'&&isTest) || (key==='composition'&&!isTest); el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; if(key==='composition') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
+function openSection(key){const card=document.querySelector(`[data-section="${key}"]`); if(card && card.classList.contains('locked')) return; currentSection=key; const d=sectionData[key]; $('#sectionTitle').textContent=d.title;$('#sectionDesc').textContent=d.desc;const wrap=$('#stageList');wrap.innerHTML='';d.stages.forEach((name,i)=>{const el=document.createElement('div'); const isTest=i===d.stages.length-1; const unlocked=i<=state.sections[key].stages || i===0; el.className='stage'+(unlocked?'':' locked')+(i<state.sections[key].stages?' done':''); let rewardText=''; if(key==='foundation') rewardText=isTest?'وزنه 15٪ • حتى 150 جوهرة':'ضمن تقييم المراحل 85٪ • حتى 850 جوهرة'; if(key==='building') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; if(key==='composition') rewardText=isTest?'وزنه 15٪':'ضمن تقييم المراحل 85٪'; el.innerHTML=`<h4>${name}</h4><small>${isTest?'اختبار نهائي للقسم':'مرحلة تعليمية'}${rewardText?' — '+rewardText:''}</small>`;if(unlocked)el.onclick=()=>openLesson(key,i,name);wrap.appendChild(el)});show('screen-section');}
 $$('.section-card').forEach(c=>c.onclick=()=>openSection(c.dataset.section)); $('#backHome').onclick=()=>show('screen-home'); $('#backSection').onclick=()=>openSection(currentSection);
 $('#continueJourney').onclick=()=>{if(sectionFill('foundation')<95)return openSection('foundation');if(state.sections.building.score<95)return openSection('building');return openSection('composition')};
 
